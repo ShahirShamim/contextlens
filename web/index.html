@@ -28,7 +28,8 @@
        <strong>every percentage point is traceable to a signal</strong>.</p>
     <p>Try the three scenarios: a clean session, a <strong>signal conflict</strong> resolved by
        time decay, and a sparse session where the system <strong>refuses to predict</strong>
-       rather than guess.</p>
+       rather than guess. Then <strong>type your own signal</strong> in the feed panel and watch
+       it get embedded and scored live — or flip the time-decay toggle to see the counterfactual.</p>
     <button id="overlay-start" class="btn btn-primary">▶ Play the demo</button>
   </div>
 </div>
@@ -56,6 +57,22 @@
     <div class="feed" id="feed">
       <div class="feed-empty" id="feed-empty">awaiting signals…</div>
     </div>
+    <form id="live-form" class="live-form" autocomplete="off">
+      <input id="live-text" maxlength="200" placeholder='Type your own signal… e.g. “customer rang asking how to cancel”' required>
+      <div class="live-row">
+        <select id="live-source" title="Which side of the boundary emits this signal">
+          <option value="device">device (edge)</option>
+          <option value="cloud">cloud (webhook)</option>
+        </select>
+        <select id="live-age" title="Signal staleness — feeds the time-decay weight">
+          <option value="0">fresh</option>
+          <option value="3">3 days old</option>
+          <option value="9">9 days old</option>
+        </select>
+        <button class="btn btn-primary" type="submit" id="live-submit">Score it</button>
+      </div>
+      <div id="live-note" class="live-note">embedded live via Vertex AI, scored in your browser · text is not stored</div>
+    </form>
   </section>
 
   <section class="panel" id="panel-map" aria-label="Intent semantic map">
@@ -77,7 +94,7 @@
   <section class="panel" id="panel-attr" aria-label="Attribution and explainability">
     <div class="panel-head">
       <h2>C · Attribution &amp; explainability</h2>
-      <span class="panel-sub">no black box — every point traceable</span>
+      <button id="decay-toggle" class="mini-toggle" title="Counterfactual: re-score with exponential time decay disabled (λ=0) — stale signals weigh the same as fresh ones">time decay: ON</button>
     </div>
 
     <div class="verdict">
@@ -133,6 +150,7 @@
 </footer>
 
 <div class="tooltip" id="tooltip" hidden></div>
+<div class="tour-caption" id="tour-caption" hidden></div>
 <noscript><p style="padding:2rem">This demo needs JavaScript.</p></noscript>
 <script src="app.js"></script>
 </body>

@@ -287,6 +287,26 @@ def main():
         json.dump(out, f, indent=1)
     print(f"Wrote {os.path.relpath(OUT_PATH)} ({os.path.getsize(OUT_PATH) // 1024} KB)\n")
 
+    # Runtime assets for the live-scoring API: axis centroids + the exact PCA
+    # transform, so a live signal lands in the same 2D space as the demo dots.
+    assets = {
+        "backend": backend,
+        "softmax_temp": PARAMS["softmax_temp"],
+        "axes": [ax["id"] for ax in AXES],
+        "centroids": {ax["id"]: centroids[ax["id"]].tolist() for ax in AXES},
+        "pca": {
+            "mean": stack.mean(axis=0).tolist(),
+            "components": vt[:2].tolist(),
+            "lo": lo.tolist(),
+            "hi": hi.tolist(),
+        },
+    }
+    assets_path = os.path.join(os.path.dirname(__file__), "..", "api", "scoring_assets.json")
+    os.makedirs(os.path.dirname(assets_path), exist_ok=True)
+    with open(assets_path, "w") as f:
+        json.dump(assets, f)
+    print(f"Wrote {os.path.relpath(assets_path)} ({os.path.getsize(assets_path) // 1024} KB)\n")
+
     # 7. Calibration report.
     targets = {
         "baseline": lambda r: r["confidence"] >= 85 and r["segment"].startswith("High-Value"),

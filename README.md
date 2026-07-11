@@ -38,6 +38,22 @@ endorsed by any company.
 | **Asynchronous conflict** (`?play=conflict`) | Fresh on-device upgrade signals vs. week-old cloud churn signals (a cancel enquiry, a failed payment) | Exponential time decay resolves the tie; confidence honestly drops from ~93% to ~72%; the drift guardrail **mutes downstream activation** while sources disagree |
 | **Sparse / drifting** (`?play=sparse`) | Weak, stale, ambiguous signals | Confidence falls below the 70% floor — the system routes to a general baseline and **emits no segment** rather than guessing |
 
+Beyond the scripted scenarios:
+
+- **Score your own signal** — type any event text (*"customer rang asking how to
+  cancel"*), pick a source and staleness, and watch it embed live (Vertex AI),
+  land on the semantic map, and move the score. Text is scored in memory, never
+  stored, and rate-limited.
+- **Counterfactual toggle** — flip **time decay off** (`?decay=0`) and re-score.
+  In the conflict scenario the system loses its tie-breaker and drops to an
+  indeterminate suppression: decay is what makes it decisive when it should be
+  and humble when it shouldn't.
+- **Tour mode** — narrated captions during playback for first-time viewers
+  (toggleable).
+- **Privacy boundary** — every device event shows what actually crossed to the
+  cloud: a 3-number vector, not the raw payload. Cloud webhooks are labeled as
+  server-side.
+
 ## What's real vs. what's simulated
 
 Honesty table — this demo argues against black boxes, so it doesn't get to be one:
@@ -52,6 +68,7 @@ Honesty table — this demo argues against black boxes, so it doesn't get to be 
 | 2D semantic map | **Real projection.** PCA of the embedding space (variance shown in the UI). |
 | Model health ledger (precision/recall) | **Illustrative.** Labeled as such in the UI — scoring a simulator against its own authored ground truth would be circular theater. |
 | Latency guardrail | **Real measurement, simulated stakes.** Actual client-side compute time against a 250ms budget. |
+| Live signal scoring | **Real, end to end.** Your text → Vertex AI embedding → same centroids, same softmax, same PCA transform as the precomputed signals (`api/`, a small FastAPI service on Cloud Run). |
 
 ## How the score is computed
 
@@ -101,7 +118,13 @@ pipeline/ (Python, runs once at build time)                 web/ (static, no bac
 │ build.py    →  embed (Vertex AI / MiniLM)    │──model.json→  · playback engine       │
 │                cosine affinities, ablations, │            │  · live scoring (same    │
 │                PCA coords, calibration check │            │    formulas as build.py) │
-└──────────────────────────────────────────────┘            └──────────────────────────┘
+└──────────────┬───────────────────────────────┘            └────────────┬─────────────┘
+               │ scoring_assets.json                                     │ POST /score
+               ▼                                                         ▼
+┌──────────────────────────────────────────────────────────────────────────────────────┐
+│ api/  FastAPI on Cloud Run — embeds free-text signals live (Vertex AI) against the   │
+│ same centroids + PCA transform; rate-limited; nothing stored                          │
+└──────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 Embedding once at ingest and doing runtime inference as pure arithmetic on cached
@@ -129,6 +152,13 @@ To use Vertex AI embeddings instead:
 ```bash
 gcloud auth application-default login
 ../.venv/bin/python build.py --project YOUR_GCP_PROJECT
+```
+
+To run the live-scoring API locally (needs the Vertex build above, which also
+writes `api/scoring_assets.json`):
+
+```bash
+GOOGLE_CLOUD_PROJECT=YOUR_GCP_PROJECT .venv/bin/python -m uvicorn main:app --port 8081 --app-dir api
 ```
 
 ## Deploy (Cloud Run)

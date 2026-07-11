@@ -1,6 +1,6 @@
 {
  "meta": {
-  "generated_at": "2026-07-11T23:14:52+00:00",
+  "generated_at": "2026-07-11T23:46:41+00:00",
   "backend": "vertex-ai/text-embedding-005",
   "embed_dims": 768,
   "pca_var_explained": 0.218,

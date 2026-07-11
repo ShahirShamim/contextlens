@@ -176,6 +176,44 @@ a:hover { text-decoration: underline; }
 .feed-json .k { color: var(--ink-muted); }
 .feed-json .v { color: var(--ink); }
 
+/* ---------- live signal form / privacy lines ---------- */
+
+.privacy-line {
+  margin-top: 0.35rem;
+  font-size: 0.68rem;
+  color: var(--ink-muted);
+  border-top: 1px solid var(--hairline);
+  padding-top: 0.3rem;
+}
+.privacy-line.device { color: #7fb98a; }
+
+.live-form { margin-top: 0.7rem; border-top: 1px solid var(--hairline); padding-top: 0.7rem; }
+.live-form input[type="text"], .live-form input {
+  width: 100%;
+  font: inherit;
+  font-size: 0.8rem;
+  color: var(--ink);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 0.7rem;
+  margin-bottom: 0.45rem;
+}
+.live-form input:focus { outline: none; border-color: var(--device); }
+.live-row { display: flex; gap: 0.45rem; flex-wrap: wrap; }
+.live-row select {
+  font: inherit;
+  font-size: 0.78rem;
+  color: var(--ink-2);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0.5rem;
+}
+.live-row .btn { margin-left: auto; }
+.live-note { font-size: 0.68rem; color: var(--ink-muted); margin-top: 0.4rem; }
+.live-note.err { color: var(--warning); }
+
 /* ---------- quadrant B: semantic map ---------- */
 
 .legend { display: flex; gap: 0.9rem; flex-wrap: wrap; font-size: 0.72rem; color: var(--ink-2); margin-bottom: 0.4rem; }
@@ -282,6 +320,20 @@ a:hover { text-decoration: underline; }
 .attr-fill.neg { right: 50%; background: var(--neg); border-radius: 4px 0 0 4px; }
 .attr-empty { color: var(--ink-muted); font-size: 0.78rem; padding: 0.5rem 0; }
 
+.mini-toggle {
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--good);
+  background: transparent;
+  border: 1px solid var(--good);
+  border-radius: 6px;
+  padding: 0.2rem 0.55rem;
+  cursor: pointer;
+}
+.mini-toggle.off { color: var(--warning); border-color: var(--warning); }
+
 .math { margin-top: 0.9rem; border-top: 1px solid var(--hairline); padding-top: 0.6rem; }
 .math summary { cursor: pointer; font-size: 0.8rem; color: var(--device); }
 .math-body { font-family: var(--mono); font-size: 0.7rem; margin-top: 0.6rem; overflow-x: auto; }
@@ -375,6 +427,27 @@ a:hover { text-decoration: underline; }
 .tooltip .tt-row { display: flex; justify-content: space-between; gap: 0.8rem; }
 .tooltip .tt-row span:first-child { color: var(--ink-muted); }
 .tooltip .tt-note { color: var(--ink-muted); margin-top: 0.3rem; font-style: italic; }
+
+.tour-caption {
+  position: fixed;
+  left: 50%;
+  bottom: 1.4rem;
+  transform: translateX(-50%) translateY(8px);
+  max-width: min(620px, calc(100vw - 2rem));
+  background: var(--surface-2);
+  border: 1px solid var(--device);
+  border-radius: 10px;
+  padding: 0.65rem 1rem;
+  font-size: 0.85rem;
+  color: var(--ink);
+  z-index: 30;
+  opacity: 0;
+  transition: opacity 250ms ease-out, transform 250ms ease-out;
+  pointer-events: none;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55);
+}
+.tour-caption.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.tour-caption[hidden] { display: block; }
 
 @media (prefers-reduced-motion: reduce) {
   .feed-item { animation: none; }

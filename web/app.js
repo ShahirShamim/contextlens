@@ -14,13 +14,22 @@
   const model = await fetch("data/model.json").then((r) => r.json());
   const P = model.meta.params;
 
+  // Live-scoring endpoint (embeds free-text signals via Vertex AI).
+  const API_URL = ["localhost", "127.0.0.1"].includes(location.hostname)
+    ? "http://localhost:8081"
+    : "https://contextlens-api-619062244311.europe-west1.run.app";
+
+  let decayOn = new URLSearchParams(location.search).get("decay") !== "0";
+  let tourOn = localStorage.getItem("contextlens_tour") !== "0";
+
   const $ = (id) => document.getElementById(id);
   const esc = (s) =>
     String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
   // ---------------------------------------------------------------- scoring
 
-  const weight = (ev) => P.source_trust[ev.source] * Math.exp(-P.lambda_decay_per_day * ev.age_days);
+  const weight = (ev) =>
+    P.source_trust[ev.source] * (decayOn ? Math.exp(-P.lambda_decay_per_day * ev.age_days) : 1);
 
   function aggregate(events) {
     const rows = events.map((ev) => {
@@ -108,33 +117,39 @@
     }).textContent = axis.label;
   }
 
-  const dotById = {}, hitById = {};
-  const allEvents = model.scenarios.flatMap((sc) => sc.events);
-  for (const ev of allEvents) {
+  const dotById = {}, hitById = {}, evById = {};
+  function addEventGeometry(ev) {
     const [x, y] = px(ev.xy);
     dotById[ev.id] = svgEl("circle", {
       cx: x, cy: y, r: 4 + ev.strength * 5,
       class: `event-dot src-${ev.source}`, "data-id": ev.id,
     });
     hitById[ev.id] = svgEl("circle", { cx: x, cy: y, r: 16, class: "hit", "data-id": ev.id });
+    evById[ev.id] = ev;
   }
+  const allEvents = model.scenarios.flatMap((sc) => sc.events);
+  allEvents.forEach(addEventGeometry);
+  let liveGeoms = [];
 
   // ---------------------------------------------------------------- tooltip
 
   const tooltip = $("tooltip");
   function showTooltip(ev, x, y) {
     const a = ev.affinities;
-    const fields = ev.top_fields
+    const fields = (ev.top_fields || [])
       .slice(0, 2)
       .map((f) => `${f.field} (${f.delta >= 0 ? "+" : ""}${f.delta.toFixed(3)})`)
       .join(", ");
+    const note = fields
+      ? `strongest fields: ${esc(fields)} — cosine delta when removed`
+      : "live signal — embedded via Vertex AI just now";
     tooltip.innerHTML =
       `<div class="tt-title">${esc(ev.event_type)} · ${ev.source} · ${ev.age_days}d old</div>` +
       `<div>${esc(ev.serialized)}</div>` +
       `<div class="tt-row"><span>Upgrade Intent</span><span>${(a.upgrade_intent * 100).toFixed(0)}%</span></div>` +
       `<div class="tt-row"><span>Engagement Depth</span><span>${(a.engagement_depth * 100).toFixed(0)}%</span></div>` +
       `<div class="tt-row"><span>Churn Risk</span><span>${(a.churn_risk * 100).toFixed(0)}%</span></div>` +
-      `<div class="tt-note">strongest fields: ${esc(fields)} — cosine delta when removed</div>`;
+      `<div class="tt-note">${note}</div>`;
     tooltip.hidden = false;
     const r = tooltip.getBoundingClientRect();
     tooltip.style.left = Math.min(x + 14, innerWidth - r.width - 10) + "px";
@@ -142,7 +157,6 @@
   }
   const hideTooltip = () => (tooltip.hidden = true);
 
-  const evById = Object.fromEntries(allEvents.map((e) => [e.id, e]));
   map.addEventListener("mousemove", (e) => {
     const id = e.target.dataset && e.target.dataset.id;
     if (id && dotById[id].classList.contains("on")) {
@@ -186,10 +200,59 @@
       `<div class="feed-meta"><span class="src">${esc(ev.source_label)}</span>` +
       `<span>${ts.toISOString().slice(0, 19)}Z</span>${stale}</div>` +
       `<pre class="feed-json">{ <span class="k">"event"</span>: <span class="v">"${esc(ev.event_type)}"</span>,\n${payload} }</pre>`;
+    const a = ev.affinities;
+    const priv = document.createElement("div");
+    if (ev.source === "device") {
+      priv.className = "privacy-line device";
+      priv.textContent =
+        `🔒 scored on-device — only the vector [${a.upgrade_intent.toFixed(2)}, ` +
+        `${a.engagement_depth.toFixed(2)}, ${a.churn_risk.toFixed(2)}] crosses to the cloud`;
+    } else {
+      priv.className = "privacy-line cloud";
+      priv.textContent = "☁ raw payload transmitted server-side (webhook)";
+    }
+    item.appendChild(priv);
     item.addEventListener("mouseenter", () => setHighlight(ev.id, true));
     item.addEventListener("mouseleave", () => setHighlight(ev.id, false));
     feed.appendChild(item);
     feed.scrollTop = feed.scrollHeight;
+  }
+
+  // ------------------------------------------------------------ tour captions
+
+  const CAPTIONS = {
+    baseline: [
+      [500, "Two sources stream in for one subscriber: on-device SDK events (blue) and cloud webhooks (green)."],
+      [2600, "Device payloads are scored on the phone — only a 3-number vector crosses to the cloud. 🔒"],
+      [5200, "Every signal lands in the semantic space and the attribution recomposes — hover any dot or bar."],
+      [8600, "Fresh, coherent evidence → high confidence. All three guardrails green: cleared for activation."],
+    ],
+    conflict: [
+      [600, "Fresh device signals show intense upgrade intent…"],
+      [2800, "…but the cloud delivers a 9-day-old cancel enquiry and a failed payment. The sources disagree."],
+      [6200, "Exponential time decay weighs the stale churn evidence at ~0.3× — the tie breaks toward fresh intent."],
+      [10200, "Confidence drops honestly, and drift mutes downstream activation. Flip “time decay: ON” to see the counterfactual."],
+    ],
+    sparse: [
+      [600, "Now the signals are weak, stale and ambiguous."],
+      [4400, "Evidence never accumulates — confidence stays under the 70% floor."],
+      [8200, "So the system refuses to emit a segment: routed to the general baseline. No guess, no damage."],
+    ],
+  };
+
+  const captionEl = $("tour-caption");
+  let captionHideTimer = null;
+  function showCaption(text) {
+    captionEl.textContent = text;
+    captionEl.hidden = false;
+    captionEl.classList.add("show");
+    clearTimeout(captionHideTimer);
+    captionHideTimer = setTimeout(() => captionEl.classList.remove("show"), 3600);
+  }
+  function hideCaption() {
+    clearTimeout(captionHideTimer);
+    captionEl.classList.remove("show");
+    captionEl.hidden = true;
   }
 
   // -------------------------------------------------------------- verdict UI
@@ -212,7 +275,9 @@
   function renderVerdict(agg, latencyMs) {
     $("segment-value").textContent = segmentOf(agg);
     $("confidence-value").textContent = agg.confidence.toFixed(1) + "%";
-    $("confidence-note").textContent = `net evidence ${agg.net >= 0 ? "+" : ""}${agg.net.toFixed(3)} · drift ${agg.drift.toFixed(2)}`;
+    $("confidence-note").textContent =
+      `net evidence ${agg.net >= 0 ? "+" : ""}${agg.net.toFixed(3)} · drift ${agg.drift.toFixed(2)}` +
+      (decayOn ? "" : " · ⚠ counterfactual: time decay disabled");
 
     const st = statusOf(agg);
     const badge = $("status-badge");
@@ -238,7 +303,9 @@
 
     // Math expander
     $("math-body").innerHTML =
-      `<div class="formula">wᵢ = trust(src)·e^(−λ·ageᵢ)      λ=${P.lambda_decay_per_day}/day · trust device=${P.source_trust.device.toFixed(2)}, cloud=${P.source_trust.cloud.toFixed(2)}\n` +
+      `<div class="formula">${decayOn
+        ? `wᵢ = trust(src)·e^(−λ·ageᵢ)      λ=${P.lambda_decay_per_day}/day · trust device=${P.source_trust.device.toFixed(2)}, cloud=${P.source_trust.cloud.toFixed(2)}`
+        : `wᵢ = trust(src)      ⚠ COUNTERFACTUAL: λ forced to 0, stale signals at full weight`}\n` +
       `vᵢ = affinity(upgrade) − affinity(churn)\n` +
       `net = Σwᵢvᵢ / Σwᵢ = ${agg.net >= 0 ? "+" : ""}${agg.net.toFixed(3)}\n` +
       `confidence = σ(k·|net|) = ${agg.confidence.toFixed(1)}%      k=${P.sigmoid_k}\n` +
@@ -310,9 +377,12 @@
     timers.forEach(clearTimeout);
     timers = [];
     activeEvents = [];
+    hideCaption();
     feed.querySelectorAll(".feed-item").forEach((n) => n.remove());
     $("feed-empty").style.display = "";
     Object.values(dotById).forEach((d) => d.classList.remove("on"));
+    liveGeoms.forEach((el) => el.remove());
+    liveGeoms = [];
     $("segment-value").textContent = "—";
     $("confidence-value").textContent = "—";
     $("confidence-note").textContent = "";
@@ -349,6 +419,20 @@
       const delay = reduced ? i * 60 : ev.t_offset_ms;
       timers.push(setTimeout(() => emit(ev), delay));
     });
+    if (tourOn && !reduced) {
+      for (const [at, text] of CAPTIONS[scenarioId] || []) {
+        timers.push(setTimeout(() => showCaption(text), at));
+      }
+    }
+  }
+
+  function refresh() {
+    if (!activeEvents.length) return;
+    const t0 = performance.now();
+    const agg = aggregate(activeEvents);
+    const latencyMs = performance.now() - t0;
+    inferences += 1;
+    renderVerdict(agg, latencyMs);
   }
 
   // --------------------------------------------------------------- controls
@@ -364,6 +448,84 @@
     b.addEventListener("click", () => play(sc.id));
     controls.insertBefore(b, helpBtn);
   }
+
+  const tourBtn = document.createElement("button");
+  tourBtn.className = "btn";
+  tourBtn.title = "Narrated captions during playback";
+  const renderTourBtn = () => (tourBtn.textContent = tourOn ? "💬 tour: on" : "💬 tour: off");
+  renderTourBtn();
+  tourBtn.addEventListener("click", () => {
+    tourOn = !tourOn;
+    localStorage.setItem("contextlens_tour", tourOn ? "1" : "0");
+    renderTourBtn();
+    if (!tourOn) hideCaption();
+  });
+  controls.insertBefore(tourBtn, helpBtn);
+
+  const decayBtn = $("decay-toggle");
+  const renderDecayBtn = () => {
+    decayBtn.textContent = decayOn ? "time decay: ON" : "time decay: OFF (counterfactual)";
+    decayBtn.classList.toggle("off", !decayOn);
+  };
+  renderDecayBtn();
+  decayBtn.addEventListener("click", () => {
+    decayOn = !decayOn;
+    renderDecayBtn();
+    refresh();
+  });
+
+  // ------------------------------------------------------------- live signal
+
+  let liveN = 0;
+  const liveForm = $("live-form");
+  const liveNote = $("live-note");
+  const liveDefaultNote = liveNote.textContent;
+  liveForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const text = $("live-text").value.trim();
+    if (!text) return;
+    const source = $("live-source").value;
+    const btn = $("live-submit");
+    btn.disabled = true;
+    btn.textContent = "Scoring…";
+    try {
+      const r = await fetch(API_URL + "/score", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text, source }),
+      });
+      if (!r.ok) throw new Error(r.status === 429 ? "rate limit — try again in a minute" : `scoring service ${r.status}`);
+      const s = await r.json();
+      const ev = {
+        id: `live-${++liveN}`,
+        t_offset_ms: 0,
+        source,
+        source_label: source === "device" ? "live_edge_input" : "live_webhook_input",
+        event_type: "custom_signal",
+        age_days: Number($("live-age").value),
+        payload: { text },
+        serialized: s.serialized,
+        sims: s.sims,
+        affinities: s.affinities,
+        dominant: s.dominant,
+        strength: s.strength,
+        xy: s.xy,
+        top_fields: [],
+      };
+      addEventGeometry(ev);
+      liveGeoms.push(dotById[ev.id], hitById[ev.id]);
+      emit(ev);
+      $("live-text").value = "";
+      liveNote.textContent = liveDefaultNote;
+      liveNote.classList.remove("err");
+    } catch (err) {
+      liveNote.textContent = `⚠ ${err.message}${err.message.includes("rate") ? "" : " — the service may be cold-starting; retry in ~10s"}`;
+      liveNote.classList.add("err");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Score it";
+    }
+  });
 
   const overlay = $("overlay");
   const deepLink = new URLSearchParams(location.search).get("play");
