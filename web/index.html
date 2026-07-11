@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ContextLens — explainable intent resolution</title>
+<meta name="description" content="Interactive demo: how fragmented device + cloud signals resolve into an explainable customer intent score, with confidence guardrails.">
+<meta property="og:title" content="ContextLens — explainable intent resolution">
+<meta property="og:description" content="Watch device-edge and cloud signals map into a shared semantic space, resolve conflicts by time decay, and produce a fully attributed propensity score — or refuse to.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="overlay" class="overlay" hidden>
+  <div class="overlay-card">
+    <h2>What am I looking at?</h2>
+    <p><strong>ContextLens</strong> is a working demo of <em>explainable</em> behavioral prediction.
+       It streams raw telemetry for one mock telco subscriber from two fragmented sources —
+       an on-device SDK and cloud webhooks — maps each signal into a shared semantic space
+       (real embeddings, precomputed), and resolves them into a propensity score where
+       <strong>every percentage point is traceable to a signal</strong>.</p>
+    <p>Try the three scenarios: a clean session, a <strong>signal conflict</strong> resolved by
+       time decay, and a sparse session where the system <strong>refuses to predict</strong>
+       rather than guess.</p>
+    <button id="overlay-start" class="btn btn-primary">▶ Play the demo</button>
+  </div>
+</div>
+
+<header class="site-header">
+  <div>
+    <h1>ContextLens</h1>
+    <p class="tagline">Explainable intent resolution — from raw fragmented signals to an auditable score</p>
+  </div>
+  <div class="subscriber-chip" id="subscriber-chip" title="Mock subscriber under observation"></div>
+</header>
+
+<nav class="controls" id="controls" aria-label="Scenario controls">
+  <!-- scenario buttons injected -->
+  <button id="help-btn" class="btn btn-ghost" title="What am I looking at?">?</button>
+</nav>
+
+<main class="grid">
+
+  <section class="panel" id="panel-feed" aria-label="Live telemetry feed">
+    <div class="panel-head">
+      <h2>A · Live telemetry feed</h2>
+      <span class="panel-sub">raw events, two sources, asynchronous</span>
+    </div>
+    <div class="feed" id="feed">
+      <div class="feed-empty" id="feed-empty">awaiting signals…</div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-map" aria-label="Intent semantic map">
+    <div class="panel-head">
+      <h2>B · Intent semantic map</h2>
+      <span class="panel-sub" id="map-sub">2D projection of the embedding space</span>
+    </div>
+    <div class="legend" id="map-legend">
+      <span class="legend-item"><span class="swatch swatch-device"></span>device signal</span>
+      <span class="legend-item"><span class="swatch swatch-cloud"></span>cloud signal</span>
+      <span class="legend-item"><span class="swatch swatch-anchor"></span>axis anchor phrase</span>
+      <span class="legend-item"><span class="swatch swatch-centroid"></span>axis centroid</span>
+    </div>
+    <div class="map-wrap">
+      <svg id="map" viewBox="0 0 600 460" role="img" aria-label="Scatter plot of signals and semantic axes in embedding space"></svg>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-attr" aria-label="Attribution and explainability">
+    <div class="panel-head">
+      <h2>C · Attribution &amp; explainability</h2>
+      <span class="panel-sub">no black box — every point traceable</span>
+    </div>
+
+    <div class="verdict">
+      <div class="stat-tile">
+        <div class="stat-label">Predicted segment</div>
+        <div class="stat-value" id="segment-value">—</div>
+        <div class="status-badge" id="status-badge"><span class="badge-icon">·</span><span class="badge-text">awaiting signals</span></div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-label">Confidence</div>
+        <div class="hero-figure" id="confidence-value">—</div>
+        <div class="stat-delta" id="confidence-note"></div>
+      </div>
+    </div>
+
+    <div class="attr-section">
+      <div class="attr-head">
+        <span>Attribution breakdown</span>
+        <span class="attr-scale"><span class="neg">← churn evidence</span> · <span class="pos">upgrade evidence →</span></span>
+      </div>
+      <div id="attr-bars" class="attr-bars"></div>
+    </div>
+
+    <details class="math" id="math-details">
+      <summary>How is this computed?</summary>
+      <div class="math-body" id="math-body"></div>
+    </details>
+  </section>
+
+</main>
+
+<section class="health" aria-label="Model health ledger">
+  <div class="panel health-card">
+    <div class="panel-head"><h2>Guardrails</h2><span class="panel-sub">know when <em>not</em> to infer</span></div>
+    <ul class="lamps" id="lamps"></ul>
+  </div>
+
+  <div class="panel health-card">
+    <div class="panel-head"><h2>Model health ledger</h2><span class="panel-sub" id="eval-sub"></span></div>
+    <div class="table-wrap"><table class="eval-table" id="eval-table"></table></div>
+  </div>
+
+  <div class="panel health-card">
+    <div class="panel-head"><h2>Unit economics</h2><span class="panel-sub">embed once at ingest, infer from cache</span></div>
+    <div class="econ" id="econ"></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <span id="meta-line"></span>
+  <span>Scenario data is authored; embeddings, similarity and attribution math are real.
+        <a id="repo-link" href="#" rel="noopener">Source &amp; case study →</a></span>
+</footer>
+
+<div class="tooltip" id="tooltip" hidden></div>
+<noscript><p style="padding:2rem">This demo needs JavaScript.</p></noscript>
+<script src="app.js"></script>
+</body>
+</html>
