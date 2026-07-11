@@ -188,6 +188,20 @@ a:hover { text-decoration: underline; }
 .privacy-line.device { color: #7fb98a; }
 
 .live-form { margin-top: 0.7rem; border-top: 1px solid var(--hairline); padding-top: 0.7rem; }
+.preset-chips { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+.chip {
+  font: inherit;
+  font-size: 0.72rem;
+  color: var(--ink-2);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.28rem 0.65rem;
+  cursor: pointer;
+  transition: border-color 120ms, color 120ms;
+}
+.chip:hover { border-color: var(--device); color: var(--ink); }
+.chip:disabled { opacity: 0.5; cursor: default; }
 .live-form input[type="text"], .live-form input {
   width: 100%;
   font: inherit;

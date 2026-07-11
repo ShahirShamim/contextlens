@@ -476,10 +476,35 @@
 
   // ------------------------------------------------------------- live signal
 
+  fetch(API_URL + "/status").catch(() => {}); // warm the scoring service early
+
+  const PRESETS = [
+    { label: "😤 asked how to cancel", text: "asked support how to cancel service", source: "cloud", age: "9" },
+    { label: "🔍 compared unlimited plans", text: "spent ten minutes comparing unlimited 5G plan prices", source: "device", age: "0" },
+    { label: "💳 payment failed twice", text: "monthly payment failed twice this month", source: "cloud", age: "3" },
+    { label: "📱 checked trade-in value", text: "checked trade-in value for current phone", source: "device", age: "0" },
+  ];
+
   let liveN = 0;
   const liveForm = $("live-form");
   const liveNote = $("live-note");
   const liveDefaultNote = liveNote.textContent;
+
+  const chips = $("preset-chips");
+  for (const p of PRESETS) {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "chip";
+    chip.textContent = p.label;
+    chip.title = `"${p.text}" · ${p.source} · ${p.age === "0" ? "fresh" : p.age + " days old"}`;
+    chip.addEventListener("click", () => {
+      $("live-text").value = p.text;
+      $("live-source").value = p.source;
+      $("live-age").value = p.age;
+      liveForm.requestSubmit();
+    });
+    chips.appendChild(chip);
+  }
   liveForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const text = $("live-text").value.trim();
@@ -488,11 +513,13 @@
     const btn = $("live-submit");
     btn.disabled = true;
     btn.textContent = "Scoring…";
+    chips.querySelectorAll(".chip").forEach((c) => (c.disabled = true));
     try {
       const r = await fetch(API_URL + "/score", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text, source }),
+        signal: AbortSignal.timeout(25000),
       });
       if (!r.ok) throw new Error(r.status === 429 ? "rate limit — try again in a minute" : `scoring service ${r.status}`);
       const s = await r.json();
@@ -524,6 +551,7 @@
     } finally {
       btn.disabled = false;
       btn.textContent = "Score it";
+      chips.querySelectorAll(".chip").forEach((c) => (c.disabled = false));
     }
   });
 

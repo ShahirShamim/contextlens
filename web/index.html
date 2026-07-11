@@ -58,7 +58,8 @@
       <div class="feed-empty" id="feed-empty">awaiting signals…</div>
     </div>
     <form id="live-form" class="live-form" autocomplete="off">
-      <input id="live-text" maxlength="200" placeholder='Type your own signal… e.g. “customer rang asking how to cancel”' required>
+      <div class="preset-chips" id="preset-chips"></div>
+      <input id="live-text" maxlength="200" placeholder='…or type your own signal' required>
       <div class="live-row">
         <select id="live-source" title="Which side of the boundary emits this signal">
           <option value="device">device (edge)</option>
