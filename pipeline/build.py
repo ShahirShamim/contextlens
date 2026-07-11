@@ -38,6 +38,14 @@ PARAMS = {
     "latency_budget_ms": 250,       # client-side compute budget (fallback rule)
 }
 
+# Different embedding models produce differently-spread cosine similarities, so
+# the confidence/drift scaling constants are calibrated per backend (the axis
+# affinities themselves stay untouched — these only rescale the readout).
+PARAMS_BY_BACKEND = {
+    "local":  {"sigmoid_k": 4.0, "drift_scale": 0.30},
+    "vertex": {"sigmoid_k": 8.0, "drift_scale": 0.19},
+}
+
 PRICING = {
     "embed_usd_per_1k_chars": 0.000025,  # Vertex text-embedding pricing basis
     "note": "Embedding happens once at ingest; runtime inference is arithmetic on cached vectors.",
@@ -157,10 +165,12 @@ def main():
 
     if args.local:
         embs, backend = embed_local(all_texts)
+        PARAMS.update(PARAMS_BY_BACKEND["local"])
     else:
         if not args.project:
             sys.exit("No GCP project. Pass --project / set GOOGLE_CLOUD_PROJECT, or use --local.")
         embs, backend = embed_vertex(all_texts, args.project, args.location)
+        PARAMS.update(PARAMS_BY_BACKEND["vertex"])
     print(f"Backend: {backend}, dims: {embs.shape[1]}")
 
     n_anchor, n_event = len(anchor_texts), len(event_texts)

@@ -1,9 +1,9 @@
 {
  "meta": {
-  "generated_at": "2026-07-11T22:57:50+00:00",
-  "backend": "sentence-transformers/all-MiniLM-L6-v2",
-  "embed_dims": 384,
-  "pca_var_explained": 0.224,
+  "generated_at": "2026-07-11T23:14:52+00:00",
+  "backend": "vertex-ai/text-embedding-005",
+  "embed_dims": 768,
+  "pca_var_explained": 0.218,
   "params": {
    "lambda_decay_per_day": 0.13,
    "source_trust": {
@@ -11,9 +11,9 @@
     "cloud": 0.85
    },
    "softmax_temp": 0.1,
-   "sigmoid_k": 4.0,
+   "sigmoid_k": 8.0,
    "confidence_floor_pct": 70.0,
-   "drift_scale": 0.3,
+   "drift_scale": 0.19,
    "drift_limit": 1.5,
    "latency_budget_ms": 250
   },
@@ -53,71 +53,71 @@
    "label": "Upgrade Intent",
    "short": "Intent",
    "centroid_xy": [
-    0.3166,
-    0.06
+    0.4565,
+    0.0895
    ],
    "anchors": [
     {
      "phrase": "comparing unlimited premium plan tiers and pricing",
      "xy": [
-      0.1515,
-      0.0781
+      0.3789,
+      0.06
      ]
     },
     {
      "phrase": "checking device upgrade eligibility in the account app",
      "xy": [
-      0.5324,
-      0.2554
+      0.587,
+      0.2518
      ]
     },
     {
      "phrase": "viewing 5G unlimited plan pricing page",
      "xy": [
-      0.274,
-      0.262
+      0.4915,
+      0.0646
      ]
     },
     {
      "phrase": "estimating the monthly cost of upgrading my plan",
      "xy": [
-      0.1776,
-      0.0957
+      0.3458,
+      0.1628
      ]
     },
     {
      "phrase": "browsing new phone deals and trade-in offers",
      "xy": [
-      0.4393,
-      0.2146
+      0.5542,
+      0.1292
      ]
     },
     {
      "phrase": "adding a premium data add-on to the cart",
      "xy": [
-      0.2781,
-      0.2717
+      0.4606,
+      0.307
      ]
     },
     {
      "phrase": "checking trade-in value for my current phone",
      "xy": [
-      0.512,
-      0.2164
+      0.468,
+      0.1179
      ]
     },
     {
      "phrase": "reading about unlimited plan benefits and perks",
      "xy": [
-      0.222,
-      0.165
+      0.3591,
+      0.1224
      ]
     },
     {
      "phrase": "reviewing a plan upgrade order at checkout",
      "xy": [
-      0.2683,
-      0.2004
+      0.4135,
+      0.2116
      ]
     }
    ]
@@ -127,64 +127,64 @@
    "label": "Engagement Depth",
    "short": "Engagement",
    "centroid_xy": [
-    0.5062,
-    0.2533
+    0.6121,
+    0.4209
    ],
    "anchors": [
     {
      "phrase": "long focused session inside the carrier account app",
      "xy": [
-      0.6146,
-      0.32
+      0.7008,
+      0.5064
      ]
     },
     {
      "phrase": "opening the mobile app every day this week",
      "xy": [
-      0.568,
-      0.3256
+      0.7575,
+      0.6204
      ]
     },
     {
      "phrase": "running a network speed test from the app",
      "xy": [
-      0.5289,
-      0.2475
+      0.7421,
+      0.4216
      ]
     },
     {
      "phrase": "exploring the 5G coverage map in detail",
      "xy": [
-      0.421,
-      0.2755
+      0.5811,
+      0.1824
      ]
     },
     {
      "phrase": "reading support documentation thoroughly",
      "xy": [
-      0.2149,
-      0.4951
+      0.3244,
+      0.4447
      ]
     },
     {
      "phrase": "reviewing data usage on the account dashboard",
      "xy": [
-      0.3079,
-      0.3855
+      0.5072,
+      0.3644
      ]
     },
     {
      "phrase": "configuring account settings and preferences",
      "xy": [
-      0.2031,
-      0.3305
+      0.3542,
+      0.454
      ]
     },
     {
      "phrase": "heavy mobile data usage streaming video",
      "xy": [
-      0.4437,
-      0.3032
+      0.6183,
+      0.4795
      ]
     }
    ]
@@ -194,64 +194,64 @@
    "label": "Churn Risk",
    "short": "Churn",
    "centroid_xy": [
-    0.071,
-    0.4694
+    0.1722,
+    0.4521
    ],
    "anchors": [
     {
      "phrase": "contacting support asking how to cancel service",
      "xy": [
-      0.1152,
-      0.7412
+      0.0683,
+      0.6523
      ]
     },
     {
      "phrase": "complaining about poor network quality and dropped calls",
      "xy": [
-      0.2612,
-      0.332
+      0.3719,
+      0.4289
      ]
     },
     {
      "phrase": "monthly bill payment failed and is overdue",
      "xy": [
-      0.1111,
-      0.6055
+      0.2467,
+      0.6838
      ]
     },
     {
      "phrase": "comparing competitor carrier prices and offers",
      "xy": [
-      0.3,
-      0.1594
+      0.3761,
+      0.1195
      ]
     },
     {
      "phrase": "requesting the account number needed to port out",
      "xy": [
-      0.2909,
-      0.463
+      0.3226,
+      0.4607
      ]
     },
     {
      "phrase": "disputing unexpected charges on the bill",
      "xy": [
-      0.2246,
-      0.5938
+      0.1139,
+      0.4786
      ]
     },
     {
      "phrase": "downgrading to a cheaper plan tier",
      "xy": [
-      0.1335,
-      0.0726
+      0.2189,
+      0.3639
      ]
     },
     {
      "phrase": "reading how to cancel my contract without fees",
      "xy": [
       0.06,
-      0.5963
+      0.4808
      ]
     }
    ]
@@ -278,33 +278,33 @@
      },
      "serialized": "mobile app event \u2014 app screen dwell. screen: plan upgrade comparison \u2014 unlimited premium 5G tiers; compared: premium unlimited vs current 20GB plan; dwell seconds: 340",
      "sims": {
-      "upgrade_intent": 0.5285,
-      "engagement_depth": 0.5027,
-      "churn_risk": 0.2701
+      "upgrade_intent": 0.8283,
+      "engagement_depth": 0.7746,
+      "churn_risk": 0.6845
      },
      "affinities": {
-      "upgrade_intent": 0.5413,
-      "engagement_depth": 0.4179,
-      "churn_risk": 0.0408
+      "upgrade_intent": 0.5488,
+      "engagement_depth": 0.3208,
+      "churn_risk": 0.1304
      },
      "dominant": "upgrade_intent",
-     "strength": 0.5285,
+     "strength": 0.8283,
      "xy": [
-      0.7651,
-      0.3138
+      0.7835,
+      0.3052
      ],
      "top_fields": [
       {
-       "field": "compared",
-       "delta": 0.03
+       "field": "screen",
+       "delta": 0.056
       },
       {
-       "field": "screen",
-       "delta": 0.0222
+       "field": "compared",
+       "delta": 0.0099
       },
       {
        "field": "dwell_seconds",
-       "delta": -0.0825
+       "delta": -0.0105
       }
      ]
     },
@@ -322,33 +322,33 @@
      },
      "serialized": "cloud event \u2014 billing event. type: data cap overage \u2014 monthly allowance exceeded; overage gb: 4.2; recommended plan: unlimited 5G upgrade",
      "sims": {
-      "upgrade_intent": 0.4157,
-      "engagement_depth": 0.3926,
-      "churn_risk": 0.3608
+      "upgrade_intent": 0.7536,
+      "engagement_depth": 0.7168,
+      "churn_risk": 0.7135
      },
      "affinities": {
-      "upgrade_intent": 0.4216,
-      "engagement_depth": 0.3348,
-      "churn_risk": 0.2436
+      "upgrade_intent": 0.4233,
+      "engagement_depth": 0.2932,
+      "churn_risk": 0.2835
      },
      "dominant": "upgrade_intent",
-     "strength": 0.4157,
+     "strength": 0.7536,
      "xy": [
-      0.2915,
-      0.6605
+      0.4051,
+      0.5181
      ],
      "top_fields": [
       {
        "field": "recommended_plan",
-       "delta": 0.1254
-      },
-      {
-       "field": "overage_gb",
-       "delta": -0.0251
+       "delta": 0.0855
       },
       {
        "field": "type",
-       "delta": -0.0796
+       "delta": -0.0049
+      },
+      {
+       "field": "overage_gb",
+       "delta": -0.0098
       }
      ]
     },
@@ -366,33 +366,33 @@
      },
      "serialized": "mobile app event \u2014 network probe. action: ran network speed test; result mbps: 48; follow up: checked 5G coverage before choosing plan upgrade",
      "sims": {
-      "upgrade_intent": 0.4657,
-      "engagement_depth": 0.5492,
-      "churn_risk": 0.292
+      "upgrade_intent": 0.7418,
+      "engagement_depth": 0.7813,
+      "churn_risk": 0.6796
      },
      "affinities": {
-      "upgrade_intent": 0.2873,
-      "engagement_depth": 0.6621,
-      "churn_risk": 0.0506
+      "upgrade_intent": 0.3311,
+      "engagement_depth": 0.4912,
+      "churn_risk": 0.1777
      },
      "dominant": "engagement_depth",
-     "strength": 0.5492,
+     "strength": 0.7813,
      "xy": [
-      0.5784,
-      0.2835
+      0.7245,
+      0.4088
      ],
      "top_fields": [
       {
        "field": "follow_up",
-       "delta": 0.0696
+       "delta": 0.0363
       },
       {
        "field": "action",
-       "delta": -0.0014
+       "delta": 0.0039
       },
       {
        "field": "result_mbps",
-       "delta": -0.0123
+       "delta": -0.0096
       }
      ]
     },
@@ -409,29 +409,29 @@
      },
      "serialized": "mobile app event \u2014 app screen dwell. screen: device upgrade eligibility checker; action: checked trade-in value for current phone",
      "sims": {
-      "upgrade_intent": 0.4732,
-      "engagement_depth": 0.3519,
-      "churn_risk": 0.2001
+      "upgrade_intent": 0.7929,
+      "engagement_depth": 0.7191,
+      "churn_risk": 0.6582
      },
      "affinities": {
-      "upgrade_intent": 0.734,
-      "engagement_depth": 0.2182,
-      "churn_risk": 0.0478
+      "upgrade_intent": 0.5753,
+      "engagement_depth": 0.2751,
+      "churn_risk": 0.1496
      },
      "dominant": "upgrade_intent",
-     "strength": 0.4732,
+     "strength": 0.7929,
      "xy": [
-      0.8801,
-      0.3965
+      0.8035,
+      0.3547
      ],
      "top_fields": [
       {
-       "field": "screen",
-       "delta": 0.0878
+       "field": "action",
+       "delta": 0.0468
       },
       {
-       "field": "action",
-       "delta": 0.0247
+       "field": "screen",
+       "delta": 0.0404
       }
      ]
     },
@@ -449,33 +449,33 @@
      },
      "serialized": "cloud event \u2014 web visit. url: /plans/unlimited-premium-benefits; referrer: google search \u2014 best unlimited 5g plan upgrade; pages in session: 3",
      "sims": {
-      "upgrade_intent": 0.5455,
-      "engagement_depth": 0.4754,
-      "churn_risk": 0.2504
+      "upgrade_intent": 0.7997,
+      "engagement_depth": 0.7159,
+      "churn_risk": 0.6643
      },
      "affinities": {
-      "upgrade_intent": 0.6458,
-      "engagement_depth": 0.3204,
-      "churn_risk": 0.0338
+      "upgrade_intent": 0.5914,
+      "engagement_depth": 0.2558,
+      "churn_risk": 0.1527
      },
      "dominant": "upgrade_intent",
-     "strength": 0.5455,
+     "strength": 0.7997,
      "xy": [
-      0.3605,
-      0.5435
+      0.5099,
+      0.3813
      ],
      "top_fields": [
       {
        "field": "referrer",
-       "delta": 0.1088
+       "delta": 0.0422
       },
       {
        "field": "url",
-       "delta": 0.0366
+       "delta": 0.0147
       },
       {
        "field": "pages_in_session",
-       "delta": -0.0452
+       "delta": 0.0032
       }
      ]
     }
@@ -501,33 +501,33 @@
      },
      "serialized": "mobile app event \u2014 app screen dwell. screen: unlimited premium plan pricing; dwell seconds: 420; local velocity: high",
      "sims": {
-      "upgrade_intent": 0.4814,
-      "engagement_depth": 0.4843,
-      "churn_risk": 0.2782
+      "upgrade_intent": 0.7078,
+      "engagement_depth": 0.7312,
+      "churn_risk": 0.6138
      },
      "affinities": {
-      "upgrade_intent": 0.4629,
-      "engagement_depth": 0.4765,
-      "churn_risk": 0.0606
+      "upgrade_intent": 0.3767,
+      "engagement_depth": 0.4761,
+      "churn_risk": 0.1472
      },
      "dominant": "engagement_depth",
-     "strength": 0.4843,
+     "strength": 0.7312,
      "xy": [
-      0.8193,
-      0.4497
+      0.8626,
+      0.5459
      ],
      "top_fields": [
       {
        "field": "screen",
-       "delta": 0.1631
+       "delta": 0.0096
       },
       {
        "field": "local_velocity",
-       "delta": 0.0018
+       "delta": 0.0015
       },
       {
        "field": "dwell_seconds",
-       "delta": -0.0417
+       "delta": -0.0089
       }
      ]
     },
@@ -545,33 +545,33 @@
      },
      "serialized": "cloud event \u2014 support ticket. topic: asked how to cancel service; sentiment: negative; channel: chat",
      "sims": {
-      "upgrade_intent": 0.1442,
-      "engagement_depth": 0.1928,
-      "churn_risk": 0.3855
+      "upgrade_intent": 0.6136,
+      "engagement_depth": 0.6401,
+      "churn_risk": 0.787
      },
      "affinities": {
-      "upgrade_intent": 0.0724,
-      "engagement_depth": 0.1178,
-      "churn_risk": 0.8097
+      "upgrade_intent": 0.1255,
+      "engagement_depth": 0.1636,
+      "churn_risk": 0.7109
      },
      "dominant": "churn_risk",
-     "strength": 0.3855,
+     "strength": 0.787,
      "xy": [
-      0.2672,
-      0.8861
+      0.1452,
+      0.8763
      ],
      "top_fields": [
       {
        "field": "topic",
-       "delta": 0.1407
+       "delta": 0.0884
       },
       {
        "field": "sentiment",
-       "delta": 0.0042
+       "delta": 0.0211
       },
       {
        "field": "channel",
-       "delta": -0.0568
+       "delta": -0.0021
       }
      ]
     },
@@ -588,29 +588,29 @@
      },
      "serialized": "mobile app event \u2014 cart event. action: added premium data add-on to cart; value usd: 25",
      "sims": {
-      "upgrade_intent": 0.4743,
-      "engagement_depth": 0.2713,
-      "churn_risk": 0.2515
+      "upgrade_intent": 0.7194,
+      "engagement_depth": 0.6978,
+      "churn_risk": 0.6237
      },
      "affinities": {
-      "upgrade_intent": 0.8071,
-      "engagement_depth": 0.1059,
-      "churn_risk": 0.087
+      "upgrade_intent": 0.4567,
+      "engagement_depth": 0.368,
+      "churn_risk": 0.1753
      },
      "dominant": "upgrade_intent",
-     "strength": 0.4743,
+     "strength": 0.7194,
      "xy": [
-      0.5566,
-      0.4923
+      0.691,
+      0.5907
      ],
      "top_fields": [
       {
        "field": "action",
-       "delta": 0.1537
+       "delta": 0.074
       },
       {
        "field": "value_usd",
-       "delta": -0.0082
+       "delta": -0.0032
       }
      ]
     },
@@ -628,33 +628,33 @@
      },
      "serialized": "cloud event \u2014 billing event. type: payment failed; amount usd: 68.5; retry: pending",
      "sims": {
-      "upgrade_intent": 0.1622,
-      "engagement_depth": 0.0845,
-      "churn_risk": 0.3953
+      "upgrade_intent": 0.6105,
+      "engagement_depth": 0.5974,
+      "churn_risk": 0.6948
      },
      "affinities": {
-      "upgrade_intent": 0.0851,
-      "engagement_depth": 0.0391,
-      "churn_risk": 0.8758
+      "upgrade_intent": 0.2381,
+      "engagement_depth": 0.2089,
+      "churn_risk": 0.553
      },
      "dominant": "churn_risk",
-     "strength": 0.3953,
+     "strength": 0.6948,
      "xy": [
-      0.2357,
-      0.8768
+      0.3205,
+      0.8309
      ],
      "top_fields": [
       {
+       "field": "type",
+       "delta": 0.016
+      },
+      {
        "field": "amount_usd",
-       "delta": 0.057
+       "delta": 0.0034
       },
       {
        "field": "retry",
-       "delta": 0.025
-      },
-      {
-       "field": "type",
-       "delta": -0.0283
+       "delta": -0.0043
       }
      ]
     },
@@ -671,29 +671,29 @@
      },
      "serialized": "mobile app event \u2014 app screen dwell. screen: checkout \u2014 plan upgrade review order; step: review order",
      "sims": {
-      "upgrade_intent": 0.4264,
-      "engagement_depth": 0.3295,
-      "churn_risk": 0.208
+      "upgrade_intent": 0.7712,
+      "engagement_depth": 0.7218,
+      "churn_risk": 0.6695
      },
      "affinities": {
-      "upgrade_intent": 0.6702,
-      "engagement_depth": 0.2543,
-      "churn_risk": 0.0755
+      "upgrade_intent": 0.5072,
+      "engagement_depth": 0.3094,
+      "churn_risk": 0.1834
      },
      "dominant": "upgrade_intent",
-     "strength": 0.4264,
+     "strength": 0.7712,
      "xy": [
-      0.8083,
-      0.4476
+      0.7425,
+      0.5059
      ],
      "top_fields": [
       {
        "field": "screen",
-       "delta": 0.1701
+       "delta": 0.1003
       },
       {
        "field": "step",
-       "delta": -0.0473
+       "delta": -0.0182
       }
      ]
     },
@@ -710,29 +710,29 @@
      },
      "serialized": "cloud event \u2014 web visit. url: /support/how-to-cancel; referrer: direct",
      "sims": {
-      "upgrade_intent": 0.1168,
-      "engagement_depth": 0.1855,
-      "churn_risk": 0.2742
+      "upgrade_intent": 0.5851,
+      "engagement_depth": 0.6336,
+      "churn_risk": 0.6849
      },
      "affinities": {
-      "upgrade_intent": 0.128,
-      "engagement_depth": 0.2544,
-      "churn_risk": 0.6176
+      "upgrade_intent": 0.1874,
+      "engagement_depth": 0.3044,
+      "churn_risk": 0.5082
      },
      "dominant": "churn_risk",
-     "strength": 0.2742,
+     "strength": 0.6849,
      "xy": [
-      0.291,
+      0.2778,
       0.94
      ],
      "top_fields": [
       {
        "field": "url",
-       "delta": 0.1208
+       "delta": 0.0829
       },
       {
        "field": "referrer",
-       "delta": 0.0078
+       "delta": 0.0214
       }
      ]
     }
@@ -757,29 +757,29 @@
      },
      "serialized": "mobile app event \u2014 app open. screen: home dashboard; dwell seconds: 12",
      "sims": {
-      "upgrade_intent": 0.1296,
-      "engagement_depth": 0.3443,
-      "churn_risk": 0.0204
+      "upgrade_intent": 0.5936,
+      "engagement_depth": 0.7293,
+      "churn_risk": 0.5638
      },
      "affinities": {
-      "upgrade_intent": 0.1011,
-      "engagement_depth": 0.865,
-      "churn_risk": 0.0339
+      "upgrade_intent": 0.1777,
+      "engagement_depth": 0.6904,
+      "churn_risk": 0.1319
      },
      "dominant": "engagement_depth",
-     "strength": 0.3443,
+     "strength": 0.7293,
      "xy": [
       0.94,
-      0.5922
+      0.7719
      ],
      "top_fields": [
       {
        "field": "screen",
-       "delta": 0.0402
+       "delta": 0.0105
       },
       {
        "field": "dwell_seconds",
-       "delta": 0.0035
+       "delta": -0.0183
       }
      ]
     },
@@ -796,29 +796,29 @@
      },
      "serialized": "cloud event \u2014 web visit. url: /support/articles/roaming-charges; referrer: email",
      "sims": {
-      "upgrade_intent": 0.2836,
-      "engagement_depth": 0.3632,
-      "churn_risk": 0.2641
+      "upgrade_intent": 0.6742,
+      "engagement_depth": 0.7056,
+      "churn_risk": 0.6974
      },
      "affinities": {
-      "upgrade_intent": 0.2476,
-      "engagement_depth": 0.5488,
-      "churn_risk": 0.2037
+      "upgrade_intent": 0.2755,
+      "engagement_depth": 0.3772,
+      "churn_risk": 0.3474
      },
      "dominant": "engagement_depth",
-     "strength": 0.3632,
+     "strength": 0.7056,
      "xy": [
-      0.3627,
-      0.8059
+      0.3817,
+      0.7303
      ],
      "top_fields": [
       {
        "field": "url",
-       "delta": 0.1795
+       "delta": 0.0627
       },
       {
        "field": "referrer",
-       "delta": -0.057
+       "delta": 0.0012
       }
      ]
     },
@@ -835,29 +835,29 @@
      },
      "serialized": "mobile app event \u2014 app screen dwell. screen: bill summary; dwell seconds: 25",
      "sims": {
-      "upgrade_intent": 0.2295,
-      "engagement_depth": 0.3404,
-      "churn_risk": 0.1904
+      "upgrade_intent": 0.6694,
+      "engagement_depth": 0.7538,
+      "churn_risk": 0.6591
      },
      "affinities": {
-      "upgrade_intent": 0.2124,
-      "engagement_depth": 0.6439,
-      "churn_risk": 0.1437
+      "upgrade_intent": 0.2366,
+      "engagement_depth": 0.5501,
+      "churn_risk": 0.2133
      },
      "dominant": "engagement_depth",
-     "strength": 0.3404,
+     "strength": 0.7538,
      "xy": [
-      0.9202,
-      0.5876
+      0.8355,
+      0.71
      ],
      "top_fields": [
       {
        "field": "screen",
-       "delta": 0.0551
+       "delta": 0.0397
       },
       {
        "field": "dwell_seconds",
-       "delta": -0.0297
+       "delta": 0.0019
       }
      ]
     },
@@ -874,29 +874,29 @@
      },
      "serialized": "cloud event \u2014 marketing event. type: email opened; campaign: competitor price match offer",
      "sims": {
-      "upgrade_intent": 0.2795,
-      "engagement_depth": 0.1273,
-      "churn_risk": 0.2121
+      "upgrade_intent": 0.6472,
+      "engagement_depth": 0.6331,
+      "churn_risk": 0.6622
      },
      "affinities": {
-      "upgrade_intent": 0.5786,
-      "engagement_depth": 0.1263,
-      "churn_risk": 0.2951
+      "upgrade_intent": 0.3301,
+      "engagement_depth": 0.2866,
+      "churn_risk": 0.3833
      },
-     "dominant": "upgrade_intent",
-     "strength": 0.2795,
+     "dominant": "churn_risk",
+     "strength": 0.6622,
      "xy": [
-      0.3611,
-      0.6799
+      0.4408,
+      0.6969
      ],
      "top_fields": [
       {
        "field": "campaign",
-       "delta": 0.2272
+       "delta": 0.0477
       },
       {
        "field": "type",
-       "delta": -0.0653
+       "delta": 0.0092
       }
      ]
     },
@@ -913,29 +913,29 @@
      },
      "serialized": "mobile app event \u2014 app open. screen: coverage map; dwell seconds: 18",
      "sims": {
-      "upgrade_intent": 0.1927,
-      "engagement_depth": 0.4251,
-      "churn_risk": 0.0871
+      "upgrade_intent": 0.6403,
+      "engagement_depth": 0.7791,
+      "churn_risk": 0.6061
      },
      "affinities": {
-      "upgrade_intent": 0.0864,
-      "engagement_depth": 0.8835,
-      "churn_risk": 0.0301
+      "upgrade_intent": 0.1748,
+      "engagement_depth": 0.7009,
+      "churn_risk": 0.1243
      },
      "dominant": "engagement_depth",
-     "strength": 0.4251,
+     "strength": 0.7791,
      "xy": [
-      0.9144,
-      0.5482
+      0.9343,
+      0.6595
      ],
      "top_fields": [
       {
        "field": "screen",
-       "delta": 0.1231
+       "delta": 0.0493
       },
       {
        "field": "dwell_seconds",
-       "delta": -0.001
+       "delta": -0.0051
       }
      ]
     }

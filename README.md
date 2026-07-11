@@ -9,7 +9,10 @@ resolves into a propensity score where **every percentage point is traceable to 
 signal** — or, when the evidence doesn't support a prediction, into an explicit,
 guardrailed refusal to predict.
 
-<!-- Live demo: URL added after Cloud Run deploy -->
+**Live demo:** https://contextlens-619062244311.europe-west2.run.app
+(deep links: [`?play=baseline`](https://contextlens-619062244311.europe-west2.run.app/?play=baseline) ·
+[`?play=conflict`](https://contextlens-619062244311.europe-west2.run.app/?play=conflict) ·
+[`?play=sparse`](https://contextlens-619062244311.europe-west2.run.app/?play=sparse))
 
 ![ContextLens — conflict scenario](docs/screenshot-conflict.png)
 
@@ -32,7 +35,7 @@ endorsed by any company.
 | Scenario | What happens | What it demonstrates |
 |---|---|---|
 | **Baseline session** (`?play=baseline`) | Fresh, coherent device + cloud signals | High-confidence prediction, full attribution, all guardrails green |
-| **Asynchronous conflict** (`?play=conflict`) | Fresh on-device upgrade signals vs. week-old cloud churn signals (a cancel enquiry, a failed payment) | Exponential time decay resolves the tie; confidence honestly drops from ~86% to ~75%; the drift guardrail **mutes downstream activation** while sources disagree |
+| **Asynchronous conflict** (`?play=conflict`) | Fresh on-device upgrade signals vs. week-old cloud churn signals (a cancel enquiry, a failed payment) | Exponential time decay resolves the tie; confidence honestly drops from ~93% to ~72%; the drift guardrail **mutes downstream activation** while sources disagree |
 | **Sparse / drifting** (`?play=sparse`) | Weak, stale, ambiguous signals | Confidence falls below the 70% floor — the system routes to a general baseline and **emits no segment** rather than guessing |
 
 ## What's real vs. what's simulated
@@ -58,9 +61,15 @@ Each signal `i` gets a weight and a signed evidence value:
 w_i        = trust(source) · e^(−λ · age_days)         λ = 0.13/day; trust: device 1.0, cloud 0.85
 v_i        = affinity(upgrade_intent) − affinity(churn_risk)
 net        = Σ w_i·v_i / Σ w_i
-confidence = 100 · σ(k · |net|)                        k = 4
-drift      = weighted_std(v_i) / 0.30
+confidence = 100 · σ(k · |net|)
+drift      = weighted_std(v_i) / drift_scale
 ```
+
+`k` and `drift_scale` are readout constants calibrated per embedding backend
+(different models spread their cosine similarities differently): `k=8,
+drift_scale=0.19` for Vertex `text-embedding-005`, `k=4, drift_scale=0.30` for
+MiniLM. `build.py` fails the build if the three scenarios stop hitting their
+target confidence shapes.
 
 Attribution share is each signal's fraction of total weighted evidence,
 `|w_i·v_i| / Σ|w_j·v_j|` — so the attribution bars always decompose the score
