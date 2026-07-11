@@ -9,10 +9,10 @@ resolves into a propensity score where **every percentage point is traceable to 
 signal** — or, when the evidence doesn't support a prediction, into an explicit,
 guardrailed refusal to predict.
 
-**Live demo:** https://contextlens-619062244311.europe-west2.run.app
-(deep links: [`?play=baseline`](https://contextlens-619062244311.europe-west2.run.app/?play=baseline) ·
-[`?play=conflict`](https://contextlens-619062244311.europe-west2.run.app/?play=conflict) ·
-[`?play=sparse`](https://contextlens-619062244311.europe-west2.run.app/?play=sparse))
+**Live demo:** https://hireme.jmkn.tech
+(deep links: [`?play=baseline`](https://hireme.jmkn.tech/?play=baseline) ·
+[`?play=conflict`](https://hireme.jmkn.tech/?play=conflict) ·
+[`?play=sparse`](https://hireme.jmkn.tech/?play=sparse))
 
 ![ContextLens — conflict scenario](docs/screenshot-conflict.png)
 
@@ -134,11 +134,12 @@ gcloud auth application-default login
 ## Deploy (Cloud Run)
 
 ```bash
-gcloud run deploy contextlens --source web/ --region europe-west2 --allow-unauthenticated
+gcloud run deploy contextlens --source web/ --region europe-west1 --allow-unauthenticated
 ```
 
 The container is nginx serving the static bundle; Cloud Run scales it to zero
-between visits.
+between visits. (europe-west1 rather than London because Cloud Run domain
+mappings aren't offered in europe-west2.)
 
 ---
 
