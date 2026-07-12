@@ -95,6 +95,21 @@ SCENARIOS = [
                     "pages_in_session": 3,
                 },
             },
+            {
+                # A stale churn whisper: shows the signed attribution (red
+                # counterweight) in the default scenario without flipping it.
+                "id": "b6",
+                "t_offset_ms": 9200,
+                "source": "cloud",
+                "source_label": "support_webhook_cloud",
+                "event_type": "support_ticket",
+                "age_days": 12,
+                "payload": {
+                    "topic": "asked about cancellation fees when leaving",
+                    "channel": "chat",
+                    "resolved": "closed — no action taken",
+                },
+            },
         ],
     },
     {

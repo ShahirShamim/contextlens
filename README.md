@@ -9,10 +9,10 @@ resolves into a propensity score where **every percentage point is traceable to 
 signal** — or, when the evidence doesn't support a prediction, into an explicit,
 guardrailed refusal to predict.
 
-**Live demo:** https://hireme.jmkn.tech
-(deep links: [`?play=baseline`](https://hireme.jmkn.tech/?play=baseline) ·
-[`?play=conflict`](https://hireme.jmkn.tech/?play=conflict) ·
-[`?play=sparse`](https://hireme.jmkn.tech/?play=sparse))
+**Live demo:** https://contextlens.hireme.jmkn.tech
+(deep links: [`?play=baseline`](https://contextlens.hireme.jmkn.tech/?play=baseline) ·
+[`?play=conflict`](https://contextlens.hireme.jmkn.tech/?play=conflict) ·
+[`?play=sparse`](https://contextlens.hireme.jmkn.tech/?play=sparse))
 
 ![ContextLens — conflict scenario](docs/screenshot-conflict.png)
 
