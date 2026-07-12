@@ -64,6 +64,12 @@ export interface Vertical {
   entity: { id: string; summary: string };
   segments: { positive: string; negative: string; indeterminate: string };
   attr_scale: { left: string; right: string };
+  business: {
+    problem: string;
+    approach: string;
+    rows: { metric: string; traditional: string; contextlens: string }[];
+    math_note: string;
+  };
   params: Params;
   eval: {
     methodology: string;

@@ -77,6 +77,28 @@ AXES = [
 for _ax in AXES:
     _ax["polarity"] = _POLARITY[_ax["id"]]
 
+BUSINESS = {
+    "problem": (
+        "Churn is usually discovered at the cancellation call, and upsell offers are "
+        "sprayed at static segments refreshed quarterly. Both burn agent time on the "
+        "wrong customers at the wrong moment."
+    ),
+    "approach": (
+        "Score every behavioral signal as it happens, act only above the 70% confidence "
+        "floor, and hand agents a briefed conversation instead of a cold list."
+    ),
+    "rows": [
+        {"metric": "Detecting the moment", "traditional": "Quarterly batch segments + outbound call lists ($8–12 per retention attempt)", "contextlens": "Continuous scoring at ≈$0.003 per 1,000 signals, marginal inference ≈$0"},
+        {"metric": "Wasted outreach", "traditional": "Blanket campaigns, ~1–2% hit rate; agents dial uninterested subscribers", "contextlens": "Suppressed below the confidence floor — no evidence, no call"},
+        {"metric": "Churn discovery", "traditional": "At the cancellation call, when the decision is already made", "contextlens": "Days earlier, from live behavior — retention plays while they're still deciding"},
+    ],
+    "math_note": (
+        "Order-of-magnitude: replacing a lost subscriber typically costs 5×+ what a "
+        "retention save costs. One briefed save per 100 scored sessions pays for "
+        "millions of inferences."
+    ),
+}
+
 SCENARIOS = [
     {
         "id": "baseline",

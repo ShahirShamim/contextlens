@@ -77,6 +77,28 @@ AXES = [
     },
 ]
 
+BUSINESS = {
+    "problem": (
+        "WISMO (“where is my order?”) is commonly cited at 30–40% of all e-commerce "
+        "support tickets, and every one is a human conversation about information the "
+        "platform already had."
+    ),
+    "approach": (
+        "Spot the anxiety before the ticket exists and answer proactively; stay silent "
+        "for confident buyers so outreach never creates the worry it prevents."
+    ),
+    "rows": [
+        {"metric": "Cost per WISMO contact", "traditional": "$4–6 per human-handled ticket (chat/email), more by phone", "contextlens": "≈$0: one push notification, triggered by a fraction-of-a-cent inference"},
+        {"metric": "Timing", "traditional": "Reactive — after the buyer is already frustrated", "contextlens": "Proactive — at the anxiety signal, before the contact form"},
+        {"metric": "Blast risk", "traditional": "Mass “it's on its way!” emails to everyone, training buyers to ignore them", "contextlens": "Suppressed when delivery confidence dominates — silence is a feature"},
+    ],
+    "math_note": (
+        "Order-of-magnitude: 10k orders/month at an 8% WISMO rate is ~800 tickets ≈ "
+        "$4,000/month of handling; deflecting 40% of them saves ~$1,600/month per 10k "
+        "orders — against pennies of inference."
+    ),
+}
+
 SCENARIOS = [
     {
         "id": "baseline",

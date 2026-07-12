@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AttrPanel } from "@/components/AttrPanel";
+import { BusinessCase } from "@/components/BusinessCase";
 import { FeedPanel } from "@/components/FeedPanel";
 import { HealthStrip } from "@/components/HealthStrip";
 import { MapPanel } from "@/components/MapPanel";
@@ -259,6 +260,8 @@ export default function App() {
         inferences={inferences}
         P={scored.P ?? vertical.params}
       />
+
+      <BusinessCase vertical={vertical} />
 
       <footer className="flex flex-wrap justify-between gap-3 pt-1 text-[11px] text-muted-foreground">
         <span>

@@ -75,6 +75,29 @@ AXES = [
     },
 ]
 
+BUSINESS = {
+    "problem": (
+        "Disputes are routed first-in-first-out, so the customer about to file a formal "
+        "complaint waits behind the one who's fine with self-serve. Misroutes mean "
+        "repeat contacts, escalations, and regulator complaints that cost hundreds per case."
+    ),
+    "approach": (
+        "Read live distress against resolution history, route escalation risk to a "
+        "briefed senior agent before the angry call, and leave calm cases in the "
+        "cheaper self-serve flow."
+    ),
+    "rows": [
+        {"metric": "Escalation detection", "traditional": "After the angry call or the formal complaint lands", "contextlens": "From live behavior — retry loops and card freezes, before the call"},
+        {"metric": "Queue strategy", "traditional": "FIFO — seniority assigned by luck; every case costs a full triage contact ($8–12)", "contextlens": "Evidence-gated routing; self-serve cases never consume an agent"},
+        {"metric": "Cost of a misroute", "traditional": "Repeat contacts + formal complaint handling (hundreds per case) + premium churn", "contextlens": "One briefed conversation at the right seniority, first time"},
+    ],
+    "math_note": (
+        "Order-of-magnitude: preventing a single formal complaint (typically hundreds "
+        "of dollars in case handling) covers the inference cost of scoring every case "
+        "the platform sees that year."
+    ),
+}
+
 SCENARIOS = [
     {
         "id": "baseline",

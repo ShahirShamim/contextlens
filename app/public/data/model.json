@@ -1,6 +1,6 @@
 {
  "meta": {
-  "generated_at": "2026-07-12T23:10:32+00:00",
+  "generated_at": "2026-07-12T23:25:31+00:00",
   "backend": "vertex-ai/text-embedding-005",
   "embed_dims": 768,
   "pca_var_explained": {
@@ -31,6 +31,28 @@
    "attr_scale": {
     "left": "churn evidence",
     "right": "upgrade evidence"
+   },
+   "business": {
+    "problem": "Churn is usually discovered at the cancellation call, and upsell offers are sprayed at static segments refreshed quarterly. Both burn agent time on the wrong customers at the wrong moment.",
+    "approach": "Score every behavioral signal as it happens, act only above the 70% confidence floor, and hand agents a briefed conversation instead of a cold list.",
+    "rows": [
+     {
+      "metric": "Detecting the moment",
+      "traditional": "Quarterly batch segments + outbound call lists ($8\u201312 per retention attempt)",
+      "contextlens": "Continuous scoring at \u2248$0.003 per 1,000 signals, marginal inference \u2248$0"
+     },
+     {
+      "metric": "Wasted outreach",
+      "traditional": "Blanket campaigns, ~1\u20132% hit rate; agents dial uninterested subscribers",
+      "contextlens": "Suppressed below the confidence floor \u2014 no evidence, no call"
+     },
+     {
+      "metric": "Churn discovery",
+      "traditional": "At the cancellation call, when the decision is already made",
+      "contextlens": "Days earlier, from live behavior \u2014 retention plays while they're still deciding"
+     }
+    ],
+    "math_note": "Order-of-magnitude: replacing a lost subscriber typically costs 5\u00d7+ what a retention save costs. One briefed save per 100 scored sessions pays for millions of inferences."
    },
    "params": {
     "lambda_decay_per_day": 0.13,
@@ -1023,6 +1045,28 @@
     "left": "delivery confidence",
     "right": "WISMO risk"
    },
+   "business": {
+    "problem": "WISMO (\u201cwhere is my order?\u201d) is commonly cited at 30\u201340% of all e-commerce support tickets, and every one is a human conversation about information the platform already had.",
+    "approach": "Spot the anxiety before the ticket exists and answer proactively; stay silent for confident buyers so outreach never creates the worry it prevents.",
+    "rows": [
+     {
+      "metric": "Cost per WISMO contact",
+      "traditional": "$4\u20136 per human-handled ticket (chat/email), more by phone",
+      "contextlens": "\u2248$0: one push notification, triggered by a fraction-of-a-cent inference"
+     },
+     {
+      "metric": "Timing",
+      "traditional": "Reactive \u2014 after the buyer is already frustrated",
+      "contextlens": "Proactive \u2014 at the anxiety signal, before the contact form"
+     },
+     {
+      "metric": "Blast risk",
+      "traditional": "Mass \u201cit's on its way!\u201d emails to everyone, training buyers to ignore them",
+      "contextlens": "Suppressed when delivery confidence dominates \u2014 silence is a feature"
+     }
+    ],
+    "math_note": "Order-of-magnitude: 10k orders/month at an 8% WISMO rate is ~800 tickets \u2248 $4,000/month of handling; deflecting 40% of them saves ~$1,600/month per 10k orders \u2014 against pennies of inference."
+   },
    "params": {
     "lambda_decay_per_day": 0.45,
     "source_trust": {
@@ -1903,6 +1947,28 @@
    "attr_scale": {
     "left": "resolution confidence",
     "right": "escalation risk"
+   },
+   "business": {
+    "problem": "Disputes are routed first-in-first-out, so the customer about to file a formal complaint waits behind the one who's fine with self-serve. Misroutes mean repeat contacts, escalations, and regulator complaints that cost hundreds per case.",
+    "approach": "Read live distress against resolution history, route escalation risk to a briefed senior agent before the angry call, and leave calm cases in the cheaper self-serve flow.",
+    "rows": [
+     {
+      "metric": "Escalation detection",
+      "traditional": "After the angry call or the formal complaint lands",
+      "contextlens": "From live behavior \u2014 retry loops and card freezes, before the call"
+     },
+     {
+      "metric": "Queue strategy",
+      "traditional": "FIFO \u2014 seniority assigned by luck; every case costs a full triage contact ($8\u201312)",
+      "contextlens": "Evidence-gated routing; self-serve cases never consume an agent"
+     },
+     {
+      "metric": "Cost of a misroute",
+      "traditional": "Repeat contacts + formal complaint handling (hundreds per case) + premium churn",
+      "contextlens": "One briefed conversation at the right seniority, first time"
+     }
+    ],
+    "math_note": "Order-of-magnitude: preventing a single formal complaint (typically hundreds of dollars in case handling) covers the inference cost of scoring every case the platform sees that year."
    },
    "params": {
     "lambda_decay_per_day": 0.13,

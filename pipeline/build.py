@@ -205,6 +205,7 @@ def build_vertical(v, embed, params):
         "entity": v.ENTITY,
         "segments": v.SEGMENTS,
         "attr_scale": v.ATTR_SCALE,
+        "business": v.BUSINESS,
         "params": params,
         "eval": {
             "methodology": EVAL_METHODOLOGY,
