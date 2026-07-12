@@ -70,6 +70,16 @@ export function HealthStrip({
   const perSignalUsd = (model.meta.avg_signal_chars * model.pricing.embed_usd_per_1k_chars) / 1000;
   const okLat = latencyMs < P.latency_budget_ms;
 
+  // "Resolutions per dollar" framing: decisioning spend only, on both sides.
+  const econ = vertical.business.econ;
+  const avgSignalsPerSession =
+    vertical.scenarios.reduce((a, s) => a + s.events.length, 0) / vertical.scenarios.length;
+  const perSessionUsd = perSignalUsd * avgSignalsPerSession;
+  const oursPerDollar = 1 / perSessionUsd;
+  const traditionalPerDollar = 1 / econ.traditional_cost_usd;
+  const compact = (n: number) =>
+    n >= 1000 ? `≈${Intl.NumberFormat("en", { notation: "compact" }).format(n)}` : n.toFixed(1);
+
   return (
     <section className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1fr_1.15fr_1fr]">
       <Card className="min-w-0">
@@ -176,21 +186,29 @@ export function HealthStrip({
       <Card className="min-w-0">
         <CardHeader>
           <CardTitle className="text-xs font-semibold uppercase tracking-wider">
-            Unit economics
+            Unit economics — resolutions per dollar
           </CardTitle>
-          <CardDescription>embed once at ingest, infer from cache</CardDescription>
+          <CardDescription>decisioning spend only, both sides</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-col gap-2.5">
           <div className="grid grid-cols-2 gap-2.5">
             <Econ
-              label="Embedding cost / 1k signals"
-              value={`$${(perSignalUsd * 1000).toFixed(4)}`}
-              note={`once, at ingest (${model.meta.avg_signal_chars} chars avg)`}
+              label={`${econ.resolution_label} / $1 · traditional`}
+              value={compact(traditionalPerDollar)}
+              note={`one $${econ.traditional_cost_usd.toFixed(0)} ${econ.traditional_unit} per case`}
             />
-            <Econ label="Marginal inference cost" value="≈ $0" note="arithmetic on cached vectors" />
+            <Econ
+              label={`${econ.resolution_label} / $1 · this engine`}
+              value={compact(oursPerDollar)}
+              note={`${avgSignalsPerSession.toFixed(1)}-signal session, embed once ($${(perSignalUsd * 1000).toFixed(4)}/1k signals), infer from cache`}
+            />
             <Econ label="Signals processed" value={String(signalsSeen)} note="this session" />
             <Econ label="Inferences run" value={String(inferences)} note="re-scored on every signal" />
           </div>
+          <p className="text-[10px] text-muted-foreground">
+            Decision ≠ outcome: acting on it (a push, a call) has its own cost — the point is that
+            knowing <em>which</em> cases deserve one stops costing ${econ.traditional_cost_usd.toFixed(0)} a time.
+          </p>
         </CardContent>
       </Card>
     </section>

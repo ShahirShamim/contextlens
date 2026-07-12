@@ -219,6 +219,8 @@ export default function App() {
         </Button>
       </nav>
 
+      <BusinessCase vertical={vertical} />
+
       <main className="grid grid-cols-1 gap-3.5 md:grid-cols-2 xl:grid-cols-[1.05fr_1.2fr_1.1fr]">
         <FeedPanel
           emitted={noisedEmitted}
@@ -260,8 +262,6 @@ export default function App() {
         inferences={inferences}
         P={scored.P ?? vertical.params}
       />
-
-      <BusinessCase vertical={vertical} />
 
       <footer className="flex flex-wrap justify-between gap-3 pt-1 text-[11px] text-muted-foreground">
         <span>

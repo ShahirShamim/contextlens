@@ -92,6 +92,7 @@ BUSINESS = {
         {"metric": "Timing", "traditional": "Reactive — after the buyer is already frustrated", "contextlens": "Proactive — at the anxiety signal, before the contact form"},
         {"metric": "Blast risk", "traditional": "Mass “it's on its way!” emails to everyone, training buyers to ignore them", "contextlens": "Suppressed when delivery confidence dominates — silence is a feature"},
     ],
+    "econ": {"traditional_cost_usd": 5.0, "traditional_unit": "human-handled WISMO ticket", "resolution_label": "deflection decisions"},
     "math_note": (
         "Order-of-magnitude: 10k orders/month at an 8% WISMO rate is ~800 tickets ≈ "
         "$4,000/month of handling; deflecting 40% of them saves ~$1,600/month per 10k "

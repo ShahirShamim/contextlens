@@ -92,6 +92,7 @@ BUSINESS = {
         {"metric": "Wasted outreach", "traditional": "Blanket campaigns, ~1–2% hit rate; agents dial uninterested subscribers", "contextlens": "Suppressed below the confidence floor — no evidence, no call"},
         {"metric": "Churn discovery", "traditional": "At the cancellation call, when the decision is already made", "contextlens": "Days earlier, from live behavior — retention plays while they're still deciding"},
     ],
+    "econ": {"traditional_cost_usd": 10.0, "traditional_unit": "outbound retention attempt", "resolution_label": "intent decisions"},
     "math_note": (
         "Order-of-magnitude: replacing a lost subscriber typically costs 5×+ what a "
         "retention save costs. One briefed save per 100 scored sessions pays for "

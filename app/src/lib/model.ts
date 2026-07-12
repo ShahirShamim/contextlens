@@ -68,6 +68,7 @@ export interface Vertical {
     problem: string;
     approach: string;
     rows: { metric: string; traditional: string; contextlens: string }[];
+    econ: { traditional_cost_usd: number; traditional_unit: string; resolution_label: string };
     math_note: string;
   };
   params: Params;
