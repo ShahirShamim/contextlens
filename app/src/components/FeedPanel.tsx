@@ -109,12 +109,21 @@ export function FeedPanel({
     setPending(true);
     setError(null);
     try {
-      const r = await fetch(API_URL + "/score", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: t, source: src }),
-        signal: AbortSignal.timeout(25000),
-      });
+      const post = () =>
+        fetch(API_URL + "/score", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: t, source: src }),
+          signal: AbortSignal.timeout(25000),
+        });
+      let r: Response;
+      try {
+        r = await post();
+      } catch {
+        // network hiccup / cold instance: one quiet automatic retry
+        await new Promise((res) => setTimeout(res, 2500));
+        r = await post();
+      }
       if (!r.ok)
         throw new Error(
           r.status === 429 ? "rate limit — try again in a minute" : `scoring service ${r.status}`
@@ -138,8 +147,8 @@ export function FeedPanel({
       });
       setText("");
     } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      setError(`⚠ ${msg}${msg.includes("rate") ? "" : " — the service may be cold-starting; retry in ~10s"}`);
+      const msg = err instanceof Error && err.message ? err.message : "scoring service unreachable";
+      setError(`⚠ ${msg}${msg.includes("rate") ? "" : " — retried once; please try again"}`);
     } finally {
       setPending(false);
     }

@@ -36,10 +36,10 @@ app = FastAPI(title="ContextLens live scoring", docs_url=None, redoc_url=None)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://hireme.jmkn.tech",
+        "https://contextlens.hireme.jmkn.tech",
         "https://contextlens-619062244311.europe-west1.run.app",
-        "http://localhost:8734",
-        "http://localhost:8000",
+        "http://localhost:5173",
+        "http://localhost:8735",
     ],
     allow_methods=["POST", "GET"],
     allow_headers=["Content-Type"],
