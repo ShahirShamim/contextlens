@@ -72,7 +72,15 @@ export function HealthStrip({
     <section className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1fr_1.15fr_1fr]">
       <Card className="min-w-0">
         <CardHeader>
-          <CardTitle className="text-xs font-semibold uppercase tracking-wider">Guardrails</CardTitle>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <CardTitle className="text-xs font-semibold uppercase tracking-wider">Guardrails</CardTitle>
+            <span
+              className="rounded-full border px-2 py-0.5 text-[10px] text-muted-foreground"
+              title="Analogue of Intent HQ's IntentOne layer: governance over data, audiences, agents and activation"
+            >
+              ≈ IntentOne governance
+            </span>
+          </div>
           <CardDescription>
             know when <em>not</em> to infer
           </CardDescription>

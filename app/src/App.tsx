@@ -12,7 +12,18 @@ import { AttrPanel } from "@/components/AttrPanel";
 import { FeedPanel } from "@/components/FeedPanel";
 import { HealthStrip } from "@/components/HealthStrip";
 import { MapPanel } from "@/components/MapPanel";
-import { aggregate, CAPTIONS, REPO_URL, type Model, type SignalEvent } from "@/lib/model";
+import {
+  aggregate,
+  applyPrivacyNoise,
+  CAPTIONS,
+  dpPenalizedParams,
+  EPSILONS,
+  LAYER_MAP,
+  REPO_URL,
+  type Epsilon,
+  type Model,
+  type SignalEvent,
+} from "@/lib/model";
 
 const params = new URLSearchParams(location.search);
 
@@ -25,8 +36,13 @@ export default function App() {
   const [caption, setCaption] = useState<string | null>(null);
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [introOpen, setIntroOpen] = useState(false);
+  const [archOpen, setArchOpen] = useState(false);
   const [signalsSeen, setSignalsSeen] = useState(0);
   const [inferences, setInferences] = useState(0);
+  const [epsilon, setEpsilon] = useState<Epsilon>(() => {
+    const e = parseFloat(params.get("eps") || "");
+    return EPSILONS.some((o) => o.value === e) ? e : null;
+  });
 
   const timers = useRef<number[]>([]);
   const captionTimer = useRef<number>(0);
@@ -90,12 +106,20 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [model]);
 
+  const noisedEmitted = useMemo(() => applyPrivacyNoise(emitted, epsilon), [emitted, epsilon]);
+
   const scored = useMemo(() => {
-    if (!emitted.length || !model) return { agg: null, latencyMs: 0 };
+    if (!emitted.length || !model) return { agg: null, latencyMs: 0, privacyCost: 0, P: null };
+    const P = dpPenalizedParams(model.meta.params, epsilon);
     const t0 = performance.now();
-    const agg = aggregate(emitted, model.meta.params, decayOn);
-    return { agg, latencyMs: performance.now() - t0 };
-  }, [emitted, decayOn, model]);
+    const agg = aggregate(noisedEmitted, P, decayOn);
+    const latencyMs = performance.now() - t0;
+    const privacyCost =
+      epsilon === null
+        ? 0
+        : aggregate(emitted, model.meta.params, decayOn).confidence - agg.confidence;
+    return { agg, latencyMs, privacyCost, P };
+  }, [emitted, noisedEmitted, decayOn, model, epsilon]);
 
   if (!model) {
     return (
@@ -105,9 +129,10 @@ export default function App() {
     );
   }
   const P = model.meta.params;
+  const noisedById = new Map(noisedEmitted.map((e) => [e.id, e]));
   const allEvents = [
-    ...model.scenarios.flatMap((s) => s.events),
-    ...emitted.filter((e) => e.id.startsWith("live-")),
+    ...model.scenarios.flatMap((s) => s.events).map((e) => noisedById.get(e.id) ?? e),
+    ...noisedEmitted.filter((e) => e.id.startsWith("live-")),
   ];
   const visibleIds = new Set(emitted.map((e) => e.id));
 
@@ -157,16 +182,39 @@ export default function App() {
         >
           💬 tour: {tourOn ? "on" : "off"}
         </Button>
-        <Button variant="outline" size="sm" className="ml-auto" title="What am I looking at?" onClick={() => setIntroOpen(true)}>
+        <Button
+          variant="outline"
+          size="sm"
+          className="ml-auto"
+          title="How this maps to Intent HQ's published seven-layer architecture"
+          onClick={() => setArchOpen(true)}
+        >
+          🗺 architecture
+        </Button>
+        <Button variant="outline" size="sm" title="What am I looking at?" onClick={() => setIntroOpen(true)}>
           ?
         </Button>
       </nav>
 
       <main className="grid grid-cols-1 gap-3.5 md:grid-cols-2 xl:grid-cols-[1.05fr_1.2fr_1.1fr]">
-        <FeedPanel emitted={emitted} hoverId={hoverId} setHoverId={setHoverId} onLiveEvent={emit} />
+        <FeedPanel
+          emitted={noisedEmitted}
+          hoverId={hoverId}
+          setHoverId={setHoverId}
+          onLiveEvent={emit}
+          epsilon={epsilon}
+          setEpsilon={setEpsilon}
+        />
         <MapPanel model={model} events={allEvents} visibleIds={visibleIds} hoverId={hoverId} setHoverId={setHoverId} />
         <div className="min-w-0 md:col-span-2 xl:col-span-1">
-          <AttrPanel agg={scored.agg} decayOn={decayOn} setDecayOn={setDecayOn} P={P} />
+          <AttrPanel
+            agg={scored.agg}
+            decayOn={decayOn}
+            setDecayOn={setDecayOn}
+            P={scored.P ?? P}
+            epsilon={epsilon}
+            privacyCost={scored.privacyCost}
+          />
         </div>
       </main>
 
@@ -198,6 +246,43 @@ export default function App() {
           {caption}
         </div>
       )}
+
+      <Dialog open={archOpen} onOpenChange={setArchOpen}>
+        <DialogContent className="max-h-[85vh] max-w-3xl overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>How this maps to a real intent platform</DialogTitle>
+            <DialogDescription>
+              Intent HQ publishes a seven-layer architecture (“Seven layers. One architecture.”) —
+              each ContextLens element is a deliberately small analogue of one layer.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-3">
+            {LAYER_MAP.map((row) => (
+              <div key={row.layer} className="rounded-lg border bg-muted/40 p-3 text-sm">
+                <div className="mb-1 flex flex-wrap items-baseline justify-between gap-2">
+                  <span className="font-semibold text-primary">{row.layer}</span>
+                </div>
+                <p className="italic text-muted-foreground">{row.theirs}</p>
+                <p className="mt-1.5">
+                  <span className="text-muted-foreground">Here: </span>
+                  {row.ours}
+                </p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Simplified: {row.simplified}
+                </p>
+              </div>
+            ))}
+            <p className="text-xs text-muted-foreground">
+              Mapping based on Intent HQ's public{" "}
+              <a href="https://intenthq.com/deeptech" rel="noopener" className="text-viz-device hover:underline">
+                /deeptech
+              </a>{" "}
+              page (July 2026). ContextLens is an independent exploration and simplification — not
+              affiliated with, endorsed by, or representative of Intent HQ's implementation.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={introOpen} onOpenChange={setIntroOpen}>
         <DialogContent className="max-w-xl">

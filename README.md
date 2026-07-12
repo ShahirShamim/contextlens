@@ -111,13 +111,13 @@ Three rules, forming an escalation ladder the scenarios walk through:
 ## Architecture
 
 ```
-pipeline/ (Python, runs once at build time)                 web/ (static, no backend)
+pipeline/ (Python, runs once at build time)                 app/ (React SPA, no backend)
 ┌──────────────────────────────────────────────┐            ┌──────────────────────────┐
-│ scenarios.py   authored raw telemetry        │            │ index.html / styles.css  │
-│ anchors.py     axis anchor phrases           │            │ app.js                   │
-│ build.py    →  embed (Vertex AI / MiniLM)    │──model.json→  · playback engine       │
-│                cosine affinities, ablations, │            │  · live scoring (same    │
-│                PCA coords, calibration check │            │    formulas as build.py) │
+│ scenarios.py   authored raw telemetry        │            │ Vite + React + shadcn/ui │
+│ anchors.py     axis anchor phrases           │            │ theme from Intent HQ's   │
+│ build.py    →  embed (Vertex AI / MiniLM)    │──model.json→ public design tokens     │
+│                cosine affinities, ablations, │            │ playback engine + live   │
+│                PCA coords, calibration check │            │ scoring (same formulas)  │
 └──────────────┬───────────────────────────────┘            └────────────┬─────────────┘
                │ scoring_assets.json                                     │ POST /score
                ▼                                                         ▼
@@ -131,6 +131,33 @@ Embedding once at ingest and doing runtime inference as pure arithmetic on cache
 vectors is also the unit-economics story: ~$0.003 of embedding per 1,000 signals,
 and a marginal inference cost of approximately zero.
 
+
+## How this maps to Intent HQ's published architecture
+
+Intent HQ describes a seven-layer stack ("Seven layers. One architecture.",
+[intenthq.com/deeptech](https://intenthq.com/deeptech), July 2026). Each ContextLens
+element is a deliberately small analogue of one layer — the in-app "🗺 architecture"
+dialog carries the same mapping:
+
+| Intent HQ layer | ContextLens analogue | Deliberately simplified |
+|---|---|---|
+| 1 · Edge AI — *"context generated on the device, kept private by design"* | Device signals scored on-device; only the 3-axis vector crosses (feed privacy lines) | Precomputed scoring, not a real SDK |
+| 2 · Deep Signal — *"behaviour at production scale, while the moment still matters"* | Async device + cloud telemetry feed | 5–6 authored events vs. 250B/day |
+| 3 · Intent AI — *"the shape of a decision, not the record of an action"* | Semantic map + axis affinities: every signal becomes an intent vector | 3 axes, cosine-to-anchor scoring |
+| 4 · Privacy Twins — *"the value of the signal without exposing the person"* | ε-budget control: real Laplace noise on vectors; confidence readout discounts certainty by noise variance | Illustrative k-anonymity cohort |
+| 5 · Marketing Agents — *"detected intent into timely action"* | Agent-decision line: action queued, held by drift, or withheld | One next-best-action per verdict |
+| 6 · IntentOne — governance hub | Guardrails panel: latency budget, confidence floor, drift mute | Three rules vs. a platform |
+| 7 · Built to Scale — *"scale only matters if the intelligence stays individual"* | Unit-economics tiles | One user, not 320M profiles |
+
+The ε slider is worth trying (`?eps=1` deep link): strong-evidence sessions survive a
+tight privacy budget with an honest confidence haircut, while marginal-evidence
+sessions (the conflict scenario) fall below the 70% floor and are suppressed —
+privacy budget consumes the evidence margin first. That is the privacy-utility
+tradeoff as an interactive control rather than a slide.
+
+ContextLens is an independent exploration inspired by that public description — not
+affiliated with, endorsed by, or representative of Intent HQ's implementation.
+
 ## Run it yourself
 
 ```bash
@@ -138,9 +165,9 @@ and a marginal inference cost of approximately zero.
 python -m venv .venv && .venv/bin/pip install -r pipeline/requirements.txt
 cd pipeline && ../.venv/bin/python build.py --local
 
-# 2. Serve the UI
-cd ../web && python3 -m http.server 8000
-# open http://localhost:8000
+# 2. Run the UI (Vite dev server)
+cd ../app && npm install && npm run dev
+# open http://localhost:5173
 ```
 
 `build.py` prints a calibration report and exits non-zero if the three scenarios
@@ -164,12 +191,15 @@ GOOGLE_CLOUD_PROJECT=YOUR_GCP_PROJECT .venv/bin/python -m uvicorn main:app --por
 ## Deploy (Cloud Run)
 
 ```bash
-gcloud run deploy contextlens --source web/ --region europe-west1 --allow-unauthenticated
+gcloud run deploy contextlens --source app/ --region europe-west1 --allow-unauthenticated
 ```
 
-The container is nginx serving the static bundle; Cloud Run scales it to zero
-between visits. (europe-west1 rather than London because Cloud Run domain
-mappings aren't offered in europe-west2.)
+The container multi-stage builds the Vite bundle and serves it with nginx; Cloud
+Run scales it to zero between visits. (europe-west1 rather than London because
+Cloud Run domain mappings aren't offered in europe-west2.) The UI is shadcn/ui
+on a Tailwind theme whose tokens — warm espresso surfaces, corporate-yellow
+primary, Barlow type — are derived from Intent HQ's public design language;
+chart series colors are CVD/contrast-validated against the dark surface.
 
 ---
 

@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { segmentOf, statusOf, type Aggregate, type Params } from "@/lib/model";
+import { agentDecision, segmentOf, statusOf, type Aggregate, type Epsilon, type Params } from "@/lib/model";
 
 const badgeClass: Record<string, string> = {
   good: "border-status-good text-status-good",
@@ -18,20 +18,32 @@ const badgeClass: Record<string, string> = {
   critical: "border-status-crit text-status-crit",
 };
 
+const agentClass: Record<string, string> = {
+  good: "border-l-status-good",
+  warning: "border-l-status-warn",
+  critical: "border-l-status-crit",
+  idle: "border-l-border",
+};
+
 export function AttrPanel({
   agg,
   decayOn,
   setDecayOn,
   P,
+  epsilon,
+  privacyCost,
 }: {
   agg: Aggregate | null;
   decayOn: boolean;
   setDecayOn: (v: boolean) => void;
   P: Params;
+  epsilon: Epsilon;
+  privacyCost: number;
 }) {
   const rows = agg ? [...agg.rows].sort((a, b) => b.share - a.share) : [];
   const maxShare = rows[0]?.share || 1;
   const st = agg ? statusOf(agg, P) : null;
+  const agent = agg ? agentDecision(agg, P) : null;
 
   return (
     <Card className="min-w-0">
@@ -85,10 +97,27 @@ export function AttrPanel({
                 net evidence {agg.net >= 0 ? "+" : ""}
                 {agg.net.toFixed(3)} · drift {agg.drift.toFixed(2)}
                 {!decayOn && " · ⚠ counterfactual"}
+                {epsilon !== null && (
+                  <span className="text-status-warn">
+                    {" "}· privacy cost −{Math.abs(privacyCost).toFixed(1)} pts (ε={epsilon})
+                  </span>
+                )}
               </div>
             )}
           </div>
         </div>
+
+        {agent && (
+          <div
+            className={`rounded-lg border border-l-3 bg-muted/40 px-3 py-2 text-sm ${agentClass[agent.kind]}`}
+            title="Analogue of Intent HQ's Marketing Agents layer: detected intent becomes timely action — but only when the guardrails clear it"
+          >
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              Agent decision <span className="normal-case">(≈ Marketing Agents)</span>
+            </span>
+            <div className="mt-0.5">{agent.text}</div>
+          </div>
+        )}
 
         <div className="flex flex-col gap-2">
           <div className="flex flex-wrap items-baseline justify-between gap-2 text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -143,7 +172,7 @@ export function AttrPanel({
                     : `wᵢ = trust(src)      ⚠ COUNTERFACTUAL: λ forced to 0, stale signals at full weight`}
                   {`\nvᵢ = affinity(upgrade) − affinity(churn)`}
                   {`\nnet = Σwᵢvᵢ / Σwᵢ = ${agg.net >= 0 ? "+" : ""}${agg.net.toFixed(3)}`}
-                  {`\nconfidence = σ(k·|net|) = ${agg.confidence.toFixed(1)}%      k=${P.sigmoid_k}`}
+                  {`\nconfidence = σ(k·|net|) = ${agg.confidence.toFixed(1)}%      k=${Number(P.sigmoid_k.toFixed(2))}${epsilon !== null ? " (discounted for ε noise variance)" : ""}`}
                   {`\ndrift = weightedStd(vᵢ)/${P.drift_scale} = ${agg.drift.toFixed(2)}      mute > ${P.drift_limit} · suppress < ${P.confidence_floor_pct}% conf`}
                 </pre>
                 <Table className="text-[11px] tabular-nums">
