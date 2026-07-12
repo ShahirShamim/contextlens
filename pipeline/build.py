@@ -65,7 +65,7 @@ EVAL_TABLE = {
     "suppression_rate_pct": 18,
 }
 
-OUT_PATH = os.path.join(os.path.dirname(__file__), "..", "web", "data", "model.json")
+OUT_PATH = os.path.join(os.path.dirname(__file__), "..", "app", "public", "data", "model.json")
 
 
 # --------------------------------------------------------------------------
