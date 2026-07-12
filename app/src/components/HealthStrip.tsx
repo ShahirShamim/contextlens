@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Aggregate, Model, Params } from "@/lib/model";
+import type { Aggregate, Model, Params, Vertical } from "@/lib/model";
 
 function Lamp({
   kind,
@@ -52,6 +52,7 @@ function Econ({ label, value, note }: { label: string; value: string; note: stri
 
 export function HealthStrip({
   model,
+  vertical,
   agg,
   latencyMs,
   signalsSeen,
@@ -59,6 +60,7 @@ export function HealthStrip({
   P,
 }: {
   model: Model;
+  vertical: Vertical;
   agg: Aggregate | null;
   latencyMs: number;
   signalsSeen: number;
@@ -150,7 +152,7 @@ export function HealthStrip({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {model.eval.rows.map((r) => (
+                {vertical.eval.rows.map((r) => (
                   <TableRow key={r.segment}>
                     <TableCell>{r.segment}</TableCell>
                     <TableCell className="text-right">{r.precision.toFixed(2)}</TableCell>
@@ -161,13 +163,13 @@ export function HealthStrip({
                 <TableRow>
                   <TableCell>Suppressed (routed to baseline)</TableCell>
                   <TableCell colSpan={3} className="text-right">
-                    {model.eval.suppression_rate_pct}% of sessions
+                    {vertical.eval.suppression_rate_pct}% of sessions
                   </TableCell>
                 </TableRow>
               </TableBody>
             </Table>
           </div>
-          <p className="mt-2 text-[11px] text-muted-foreground">{model.eval.methodology}</p>
+          <p className="mt-2 text-[11px] text-muted-foreground">{vertical.eval.methodology}</p>
         </CardContent>
       </Card>
 

@@ -12,23 +12,25 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { API_URL, EPSILONS, PRESETS, type Epsilon, type SignalEvent } from "@/lib/model";
+import { API_URL, EPSILONS, PRESETS, type Epsilon, type SignalEvent, type Vertical } from "@/lib/model";
 
 function FeedItem({
   ev,
   hovered,
   isNew,
   epsilon,
+  axisIds,
   setHoverId,
 }: {
   ev: SignalEvent;
   hovered: boolean;
   isNew: boolean;
   epsilon: Epsilon;
+  axisIds: string[];
   setHoverId: (id: string | null) => void;
 }) {
   const ts = new Date(Date.now() - ev.age_days * 864e5).toISOString().slice(0, 19) + "Z";
-  const a = ev.affinities;
+  const vec = axisIds.map((k) => ev.affinities[k].toFixed(2)).join(", ");
   return (
     <div
       className={[
@@ -59,8 +61,7 @@ function FeedItem({
       <div className="mt-1.5 border-t border-border pt-1 text-[10px] text-muted-foreground">
         {ev.source === "device" ? (
           <span className="text-status-good/80">
-            🔒 scored on-device — only the vector [{a.upgrade_intent.toFixed(2)},{" "}
-            {a.engagement_depth.toFixed(2)}, {a.churn_risk.toFixed(2)}] crosses to the cloud
+            🔒 scored on-device — only the vector [{vec}] crosses to the cloud
             {epsilon !== null && ` · DP noise ε=${epsilon}`}
           </span>
         ) : (
@@ -81,6 +82,7 @@ export function FeedPanel({
   onLiveEvent,
   epsilon,
   setEpsilon,
+  vertical,
 }: {
   emitted: SignalEvent[];
   hoverId: string | null;
@@ -88,7 +90,10 @@ export function FeedPanel({
   onLiveEvent: (ev: SignalEvent) => void;
   epsilon: Epsilon;
   setEpsilon: (e: Epsilon) => void;
+  vertical: Vertical;
 }) {
+  const axisIds = vertical.axes.map((a) => a.id);
+  const presets = PRESETS[vertical.id] ?? [];
   const [text, setText] = useState("");
   const [source, setSource] = useState<"device" | "cloud">("device");
   const [age, setAge] = useState("0");
@@ -113,7 +118,7 @@ export function FeedPanel({
         fetch(API_URL + "/score", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: t, source: src }),
+          body: JSON.stringify({ text: t, source: src, vertical: vertical.id }),
           signal: AbortSignal.timeout(25000),
         });
       let r: Response;
@@ -213,6 +218,7 @@ export function FeedPanel({
                 hovered={hoverId === ev.id}
                 isNew={i === emitted.length - 1}
                 epsilon={epsilon}
+                axisIds={axisIds}
                 setHoverId={setHoverId}
               />
             ))
@@ -227,7 +233,7 @@ export function FeedPanel({
           }}
         >
           <div className="flex flex-wrap gap-1.5">
-            {PRESETS.map((p) => (
+            {presets.map((p) => (
               <Button
                 key={p.label}
                 type="button"

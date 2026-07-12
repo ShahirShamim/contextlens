@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Model, SignalEvent } from "@/lib/model";
+import type { Model, SignalEvent, Vertical } from "@/lib/model";
 
 const W = 600;
 const H = 460;
@@ -14,12 +14,14 @@ interface Tip {
 
 export function MapPanel({
   model,
+  vertical,
   events,
   visibleIds,
   hoverId,
   setHoverId,
 }: {
   model: Model;
+  vertical: Vertical;
   events: SignalEvent[];
   visibleIds: Set<string>;
   hoverId: string | null;
@@ -35,7 +37,7 @@ export function MapPanel({
         </CardTitle>
         <CardDescription>
           PCA of {model.meta.embed_dims}-d embedding space (
-          {(model.meta.pca_var_explained * 100).toFixed(0)}% var)
+          {((model.meta.pca_var_explained[vertical.id] ?? 0) * 100).toFixed(0)}% var)
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
@@ -65,7 +67,7 @@ export function MapPanel({
               setHoverId(null);
             }}
           >
-            {model.axes.map((axis) => {
+            {vertical.axes.map((axis) => {
               const [cx, cy] = px(axis.centroid_xy);
               return (
                 <g key={axis.id}>
@@ -149,13 +151,11 @@ export function MapPanel({
               </div>
               <div className="text-muted-foreground">{tip.ev.serialized}</div>
               <div className="mt-1.5 flex flex-col gap-0.5">
-                {(["upgrade_intent", "engagement_depth", "churn_risk"] as const).map((k) => (
-                  <div key={k} className="flex justify-between gap-4">
-                    <span className="text-muted-foreground">
-                      {k.replace("_", " ").replace(/\b\w/g, (c) => c.toUpperCase())}
-                    </span>
+                {vertical.axes.map((ax) => (
+                  <div key={ax.id} className="flex justify-between gap-4">
+                    <span className="text-muted-foreground">{ax.label}</span>
                     <span className="text-popover-foreground">
-                      {(tip.ev.affinities[k] * 100).toFixed(0)}%
+                      {(tip.ev.affinities[ax.id] * 100).toFixed(0)}%
                     </span>
                   </div>
                 ))}

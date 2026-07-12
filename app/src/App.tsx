@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AttrPanel } from "@/components/AttrPanel";
 import { FeedPanel } from "@/components/FeedPanel";
 import { HealthStrip } from "@/components/HealthStrip";
@@ -19,16 +20,19 @@ import {
   dpPenalizedParams,
   EPSILONS,
   LAYER_MAP,
+  polarityAxis,
   REPO_URL,
   type Epsilon,
   type Model,
   type SignalEvent,
+  type Vertical,
 } from "@/lib/model";
 
 const params = new URLSearchParams(location.search);
 
 export default function App() {
   const [model, setModel] = useState<Model | null>(null);
+  const [verticalId, setVerticalId] = useState(params.get("vertical") || "telco");
   const [emitted, setEmitted] = useState<SignalEvent[]>([]);
   const [activeScenario, setActiveScenario] = useState<string | null>(null);
   const [decayOn, setDecayOn] = useState(params.get("decay") !== "0");
@@ -65,20 +69,18 @@ export default function App() {
   }, []);
 
   const play = useCallback(
-    (scenarioId: string, m: Model, tour: boolean) => {
+    (scenarioId: string, v: Vertical, tour: boolean) => {
       clearTimers();
       setEmitted([]);
       setActiveScenario(scenarioId);
-      const sc = m.scenarios.find((s) => s.id === scenarioId);
+      const sc = v.scenarios.find((s) => s.id === scenarioId);
       if (!sc) return;
       const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
       sc.events.forEach((ev, i) => {
-        timers.current.push(
-          window.setTimeout(() => emit(ev), reduced ? i * 60 : ev.t_offset_ms)
-        );
+        timers.current.push(window.setTimeout(() => emit(ev), reduced ? i * 60 : ev.t_offset_ms));
       });
       if (tour && !reduced) {
-        for (const [at, text] of CAPTIONS[scenarioId] || []) {
+        for (const [at, text] of CAPTIONS[v.id]?.[scenarioId] || []) {
           timers.current.push(
             window.setTimeout(() => {
               setCaption(text);
@@ -94,42 +96,54 @@ export default function App() {
 
   useEffect(() => {
     if (!model) return;
+    const v = model.verticals.find((x) => x.id === verticalId) ?? model.verticals[0];
     const deepLink = params.get("play");
-    const auto = model.scenarios.some((s) => s.id === deepLink) ? deepLink : null;
-    // Always start playing — first-time visitors get the intro dialog on top
-    // of a session that is already alive behind it.
+    const auto = v.scenarios.some((s) => s.id === deepLink) ? deepLink : null;
     if (!localStorage.getItem("contextlens_seen") && !auto) setIntroOpen(true);
-    const t = window.setTimeout(() => play(auto || "baseline", model, tourOn), 400);
+    const t = window.setTimeout(() => play(auto || "baseline", v, tourOn), 400);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [model]);
 
+  const vertical = model
+    ? (model.verticals.find((x) => x.id === verticalId) ?? model.verticals[0])
+    : null;
+  const posAxis = vertical ? polarityAxis(vertical, "positive") : "";
+  const negAxis = vertical ? polarityAxis(vertical, "negative") : "";
+
   const noisedEmitted = useMemo(() => applyPrivacyNoise(emitted, epsilon), [emitted, epsilon]);
 
   const scored = useMemo(() => {
-    if (!emitted.length || !model) return { agg: null, latencyMs: 0, privacyCost: 0, P: null };
-    const P = dpPenalizedParams(model.meta.params, epsilon);
+    if (!emitted.length || !vertical) return { agg: null, latencyMs: 0, privacyCost: 0, P: null };
+    const P = dpPenalizedParams(vertical.params, epsilon);
     const t0 = performance.now();
-    const agg = aggregate(noisedEmitted, P, decayOn);
+    const agg = aggregate(noisedEmitted, P, decayOn, posAxis, negAxis);
     const latencyMs = performance.now() - t0;
     const privacyCost =
       epsilon === null
         ? 0
-        : aggregate(emitted, model.meta.params, decayOn).confidence - agg.confidence;
+        : aggregate(emitted, vertical.params, decayOn, posAxis, negAxis).confidence - agg.confidence;
     return { agg, latencyMs, privacyCost, P };
-  }, [emitted, noisedEmitted, decayOn, model, epsilon]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [emitted, noisedEmitted, decayOn, vertical, epsilon]);
 
-  if (!model) {
+  if (!model || !vertical) {
     return (
       <div className="flex min-h-screen items-center justify-center text-muted-foreground">
         loading model…
       </div>
     );
   }
-  const P = model.meta.params;
+
+  const switchVertical = (id: string) => {
+    setVerticalId(id);
+    const v = model.verticals.find((x) => x.id === id)!;
+    play("baseline", v, tourOn);
+  };
+
   const noisedById = new Map(noisedEmitted.map((e) => [e.id, e]));
   const allEvents = [
-    ...model.scenarios.flatMap((s) => s.events).map((e) => noisedById.get(e.id) ?? e),
+    ...vertical.scenarios.flatMap((s) => s.events).map((e) => noisedById.get(e.id) ?? e),
     ...noisedEmitted.filter((e) => e.id.startsWith("live-")),
   ];
   const visibleIds = new Set(emitted.map((e) => e.id));
@@ -143,26 +157,36 @@ export default function App() {
             ContextLens
           </h1>
           <p className="text-sm text-muted-foreground">
-            Explainable intent resolution — from raw fragmented signals to an auditable score
+            Explainable intent resolution — one engine, three industries
           </p>
         </div>
-        <div className="rounded-lg border bg-card px-3 py-2 font-mono text-xs" title="Mock subscriber under observation">
-          <b className="text-foreground">{model.subscriber.user_id}</b>
-          <span className="text-muted-foreground">
-            {" "}· {model.subscriber.plan} · tenure {model.subscriber.tenure_months}mo ·{" "}
-            {model.subscriber.region}
-          </span>
+        <div className="rounded-lg border bg-card px-3 py-2 font-mono text-xs" title={vertical.description}>
+          <b className="text-foreground">{vertical.entity.id}</b>
+          <span className="text-muted-foreground"> · {vertical.entity.summary}</span>
         </div>
       </header>
 
+      <div className="flex flex-wrap items-center gap-2">
+        <Tabs value={vertical.id} onValueChange={(v) => v && switchVertical(v)}>
+          <TabsList>
+            {model.verticals.map((v) => (
+              <TabsTrigger key={v.id} value={v.id} title={v.description}>
+                {v.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+        <span className="text-xs text-muted-foreground">{vertical.description}</span>
+      </div>
+
       <nav className="flex flex-wrap items-center gap-2" aria-label="Scenario controls">
-        {model.scenarios.map((sc) => (
+        {vertical.scenarios.map((sc) => (
           <Button
             key={sc.id}
             variant={activeScenario === sc.id ? "default" : "outline"}
             size="sm"
             title={sc.description}
-            onClick={() => play(sc.id, model, tourOn)}
+            onClick={() => play(sc.id, vertical, tourOn)}
           >
             {sc.button}
           </Button>
@@ -202,17 +226,25 @@ export default function App() {
           onLiveEvent={emit}
           epsilon={epsilon}
           setEpsilon={setEpsilon}
+          vertical={vertical}
         />
-        <MapPanel model={model} events={allEvents} visibleIds={visibleIds} hoverId={hoverId} setHoverId={setHoverId} />
+        <MapPanel
+          model={model}
+          vertical={vertical}
+          events={allEvents}
+          visibleIds={visibleIds}
+          hoverId={hoverId}
+          setHoverId={setHoverId}
+        />
         <div className="min-w-0 md:col-span-2 xl:col-span-1">
           <AttrPanel
             agg={scored.agg}
             decayOn={decayOn}
             setDecayOn={setDecayOn}
-            P={scored.P ?? P}
+            P={scored.P ?? vertical.params}
             epsilon={epsilon}
             privacyCost={scored.privacyCost}
-            subscriber={model.subscriber}
+            vertical={vertical}
             initialCallOpen={params.get("call") === "1"}
           />
         </div>
@@ -220,17 +252,18 @@ export default function App() {
 
       <HealthStrip
         model={model}
+        vertical={vertical}
         agg={scored.agg}
         latencyMs={scored.latencyMs}
         signalsSeen={signalsSeen}
         inferences={inferences}
-        P={P}
+        P={scored.P ?? vertical.params}
       />
 
       <footer className="flex flex-wrap justify-between gap-3 pt-1 text-[11px] text-muted-foreground">
         <span>
           embeddings: {model.meta.backend} ({model.meta.embed_dims}d) · 2D map: PCA,{" "}
-          {(model.meta.pca_var_explained * 100).toFixed(0)}% variance · built{" "}
+          {((model.meta.pca_var_explained[vertical.id] ?? 0) * 100).toFixed(0)}% variance · built{" "}
           {model.meta.generated_at.slice(0, 10)}
         </span>
         <span>
@@ -267,9 +300,7 @@ export default function App() {
                   <span className="text-muted-foreground">Here: </span>
                   {row.ours}
                 </p>
-                <p className="mt-0.5 text-xs text-muted-foreground">
-                  Simplified: {row.simplified}
-                </p>
+                <p className="mt-0.5 text-xs text-muted-foreground">Simplified: {row.simplified}</p>
               </div>
             ))}
             <p className="text-xs text-muted-foreground">
@@ -289,36 +320,34 @@ export default function App() {
           <DialogHeader>
             <DialogTitle>What am I looking at?</DialogTitle>
             <DialogDescription>
-              A working demo of explainable behavioral prediction.
+              A working demo of explainable behavioral prediction — one engine, three industries.
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-3 text-sm leading-relaxed text-muted-foreground">
             <p>
-                  <strong className="text-foreground">ContextLens</strong> is a working demo of{" "}
-                  <em>explainable</em> behavioral prediction. It streams raw telemetry for one mock
-                  telco subscriber from two fragmented sources — an on-device SDK and cloud webhooks
-                  — maps each signal into a shared semantic space (real embeddings, precomputed),
-                  and resolves them into a propensity score where{" "}
-                  <strong className="text-foreground">
-                    every percentage point is traceable to a signal
-                  </strong>
-                  .
-                </p>
-                <p>
-                  Try the three scenarios: a clean session, a{" "}
-                  <strong className="text-foreground">signal conflict</strong> resolved by time
-                  decay, and a sparse session where the system{" "}
-                  <strong className="text-foreground">refuses to predict</strong> rather than guess.
-                  Then type your own signal and watch it get scored live — or flip the time-decay
-                  toggle to see the counterfactual.
-                </p>
+              <strong className="text-foreground">ContextLens</strong> streams raw telemetry from
+              two fragmented sources — an on-device SDK and cloud webhooks — maps each signal into
+              a shared semantic space (real embeddings, precomputed), and resolves them into a
+              propensity score where{" "}
+              <strong className="text-foreground">every percentage point is traceable to a signal</strong>.
+              Switch tabs to see the same engine drive telco upgrades, marketplace WISMO
+              deflection, and fintech escalation routing.
+            </p>
+            <p>
+              Try the three scenarios per industry: a clean session, a{" "}
+              <strong className="text-foreground">signal conflict</strong> resolved by time decay,
+              and a sparse session where the system{" "}
+              <strong className="text-foreground">refuses to predict</strong> rather than guess.
+              Then type your own signal, take the ☎ inbound call, or flip the time-decay and ε
+              privacy toggles.
+            </p>
           </div>
           <DialogFooter>
             <Button
               onClick={() => {
                 setIntroOpen(false);
                 localStorage.setItem("contextlens_seen", "1");
-                if (!emitted.length) play("baseline", model, tourOn);
+                if (!emitted.length) play("baseline", vertical, tourOn);
               }}
             >
               Got it — show me

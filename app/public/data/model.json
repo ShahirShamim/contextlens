@@ -1,985 +1,2763 @@
 {
  "meta": {
-  "generated_at": "2026-07-12T04:23:58+00:00",
+  "generated_at": "2026-07-12T23:10:32+00:00",
   "backend": "vertex-ai/text-embedding-005",
   "embed_dims": 768,
-  "pca_var_explained": 0.223,
-  "params": {
-   "lambda_decay_per_day": 0.13,
-   "source_trust": {
-    "device": 1.0,
-    "cloud": 0.85
-   },
-   "softmax_temp": 0.1,
-   "sigmoid_k": 8.0,
-   "confidence_floor_pct": 70.0,
-   "drift_scale": 0.19,
-   "drift_limit": 1.5,
-   "latency_budget_ms": 250
+  "pca_var_explained": {
+   "telco": 0.223,
+   "marketplace": 0.235,
+   "fintech": 0.216
   },
-  "avg_signal_chars": 105.2
+  "avg_signal_chars": 100.2
  },
  "pricing": {
   "embed_usd_per_1k_chars": 2.5e-05,
   "note": "Embedding happens once at ingest; runtime inference is arithmetic on cached vectors."
  },
- "eval": {
-  "methodology": "Illustrative offline evaluation on 62 simulated held-out sessions with authored ground-truth labels. Included to show the shape of a model health ledger, not as a real benchmark.",
-  "rows": [
-   {
-    "segment": "High-Value Upgrade Propensity",
-    "precision": 0.91,
-    "recall": 0.84,
-    "n": 38
+ "verticals": [
+  {
+   "id": "telco",
+   "label": "Telco",
+   "description": "Subscriber upgrade propensity vs churn \u2014 marketing activation",
+   "entity": {
+    "id": "sub_88231",
+    "summary": "Mid 20GB / mo \u00b7 tenure 26mo \u00b7 urban-5g"
    },
-   {
-    "segment": "Churn Risk \u2014 Retention Route",
-    "precision": 0.87,
-    "recall": 0.79,
-    "n": 24
-   }
-  ],
-  "suppression_rate_pct": 18
- },
- "subscriber": {
-  "user_id": "sub_88231",
-  "plan": "Mid 20GB / mo",
-  "tenure_months": 26,
-  "region": "urban-5g"
- },
- "axes": [
-  {
-   "id": "upgrade_intent",
-   "label": "Upgrade Intent",
-   "short": "Intent",
-   "centroid_xy": [
-    0.4362,
-    0.8919
+   "segments": {
+    "positive": "High-Value Upgrade Propensity (Unlimited 5G)",
+    "negative": "Churn Risk \u2014 Retention Route",
+    "indeterminate": "Indeterminate \u2014 General Baseline"
+   },
+   "attr_scale": {
+    "left": "churn evidence",
+    "right": "upgrade evidence"
+   },
+   "params": {
+    "lambda_decay_per_day": 0.13,
+    "source_trust": {
+     "device": 1.0,
+     "cloud": 0.85
+    },
+    "softmax_temp": 0.1,
+    "sigmoid_k": 8.0,
+    "confidence_floor_pct": 70.0,
+    "drift_scale": 0.19,
+    "drift_limit": 1.5,
+    "latency_budget_ms": 250
+   },
+   "eval": {
+    "methodology": "Illustrative offline evaluation on 62 simulated held-out sessions with authored ground-truth labels. Included to show the shape of a model health ledger, not as a real benchmark.",
+    "rows": [
+     {
+      "segment": "High-Value Upgrade Propensity (Unlimited 5G)",
+      "precision": 0.91,
+      "recall": 0.84,
+      "n": 38
+     },
+     {
+      "segment": "Churn Risk \u2014 Retention Route",
+      "precision": 0.87,
+      "recall": 0.79,
+      "n": 24
+     }
+    ],
+    "suppression_rate_pct": 18
+   },
+   "axes": [
+    {
+     "id": "upgrade_intent",
+     "label": "Upgrade Intent",
+     "short": "Intent",
+     "polarity": "positive",
+     "centroid_xy": [
+      0.4362,
+      0.8919
+     ],
+     "anchors": [
+      {
+       "phrase": "comparing unlimited premium plan tiers and pricing",
+       "xy": [
+        0.512,
+        0.94
+       ]
+      },
+      {
+       "phrase": "checking device upgrade eligibility in the account app",
+       "xy": [
+        0.3343,
+        0.6941
+       ]
+      },
+      {
+       "phrase": "viewing 5G unlimited plan pricing page",
+       "xy": [
+        0.3912,
+        0.9154
+       ]
+      },
+      {
+       "phrase": "estimating the monthly cost of upgrading my plan",
+       "xy": [
+        0.5626,
+        0.8455
+       ]
+      },
+      {
+       "phrase": "browsing new phone deals and trade-in offers",
+       "xy": [
+        0.3468,
+        0.8233
+       ]
+      },
+      {
+       "phrase": "adding a premium data add-on to the cart",
+       "xy": [
+        0.4592,
+        0.6886
+       ]
+      },
+      {
+       "phrase": "checking trade-in value for my current phone",
+       "xy": [
+        0.4434,
+        0.8435
+       ]
+      },
+      {
+       "phrase": "reading about unlimited plan benefits and perks",
+       "xy": [
+        0.5373,
+        0.8896
+       ]
+      },
+      {
+       "phrase": "reviewing a plan upgrade order at checkout",
+       "xy": [
+        0.5018,
+        0.7787
+       ]
+      }
+     ]
+    },
+    {
+     "id": "engagement_depth",
+     "label": "Engagement Depth",
+     "short": "Engagement",
+     "polarity": "neutral",
+     "centroid_xy": [
+      0.3236,
+      0.5406
+     ],
+     "anchors": [
+      {
+       "phrase": "long focused session inside the carrier account app",
+       "xy": [
+        0.2618,
+        0.4176
+       ]
+      },
+      {
+       "phrase": "opening the mobile app every day this week",
+       "xy": [
+        0.2126,
+        0.3012
+       ]
+      },
+      {
+       "phrase": "running a network speed test from the app",
+       "xy": [
+        0.1934,
+        0.505
+       ]
+      },
+      {
+       "phrase": "exploring the 5G coverage map in detail",
+       "xy": [
+        0.3215,
+        0.7782
+       ]
+      },
+      {
+       "phrase": "reading support documentation thoroughly",
+       "xy": [
+        0.6191,
+        0.5893
+       ]
+      },
+      {
+       "phrase": "reviewing data usage on the account dashboard",
+       "xy": [
+        0.4193,
+        0.624
+       ]
+      },
+      {
+       "phrase": "configuring account settings and preferences",
+       "xy": [
+        0.5934,
+        0.5685
+       ]
+      },
+      {
+       "phrase": "heavy mobile data usage streaming video",
+       "xy": [
+        0.327,
+        0.4819
+       ]
+      }
+     ]
+    },
+    {
+     "id": "churn_risk",
+     "label": "Churn Risk",
+     "short": "Churn",
+     "polarity": "negative",
+     "centroid_xy": [
+      0.79,
+      0.6003
+     ],
+     "anchors": [
+      {
+       "phrase": "contacting support asking how to cancel service",
+       "xy": [
+        0.94,
+        0.4142
+       ]
+      },
+      {
+       "phrase": "complaining about poor network quality and dropped calls",
+       "xy": [
+        0.5756,
+        0.5855
+       ]
+      },
+      {
+       "phrase": "monthly bill payment failed and is overdue",
+       "xy": [
+        0.7361,
+        0.3723
+       ]
+      },
+      {
+       "phrase": "comparing competitor carrier prices and offers",
+       "xy": [
+        0.5295,
+        0.8754
+       ]
+      },
+      {
+       "phrase": "requesting the account number needed to port out",
+       "xy": [
+        0.6365,
+        0.5587
+       ]
+      },
+      {
+       "phrase": "disputing unexpected charges on the bill",
+       "xy": [
+        0.8536,
+        0.5892
+       ]
+      },
+      {
+       "phrase": "downgrading to a cheaper plan tier",
+       "xy": [
+        0.7264,
+        0.6753
+       ]
+      },
+      {
+       "phrase": "reading how to cancel my contract without fees",
+       "xy": [
+        0.9245,
+        0.5807
+       ]
+      }
+     ]
+    }
    ],
-   "anchors": [
+   "scenarios": [
     {
-     "phrase": "comparing unlimited premium plan tiers and pricing",
-     "xy": [
-      0.512,
-      0.94
+     "id": "baseline",
+     "label": "Baseline session",
+     "button": "\u25b6 Play baseline session",
+     "description": "A fresh, coherent session: on-device plan research plus a cloud billing overage. Signals agree \u2014 high-confidence upgrade propensity.",
+     "events": [
+      {
+       "id": "b1",
+       "t_offset_ms": 400,
+       "source": "device",
+       "source_label": "ios_sdk_edge",
+       "event_type": "app_screen_dwell",
+       "age_days": 0,
+       "payload": {
+        "screen": "plan upgrade comparison \u2014 unlimited premium 5G tiers",
+        "compared": "premium unlimited vs current 20GB plan",
+        "dwell_seconds": 340
+       },
+       "serialized": "mobile app event \u2014 app screen dwell. screen: plan upgrade comparison \u2014 unlimited premium 5G tiers; compared: premium unlimited vs current 20GB plan; dwell seconds: 340",
+       "sims": {
+        "upgrade_intent": 0.8283,
+        "engagement_depth": 0.7746,
+        "churn_risk": 0.6845
+       },
+       "affinities": {
+        "upgrade_intent": 0.5488,
+        "engagement_depth": 0.3208,
+        "churn_risk": 0.1304
+       },
+       "dominant": "upgrade_intent",
+       "strength": 0.8283,
+       "xy": [
+        0.1533,
+        0.5809
+       ],
+       "top_fields": [
+        {
+         "field": "screen",
+         "delta": 0.056
+        },
+        {
+         "field": "compared",
+         "delta": 0.0099
+        },
+        {
+         "field": "dwell_seconds",
+         "delta": -0.0105
+        }
+       ]
+      },
+      {
+       "id": "b2",
+       "t_offset_ms": 2200,
+       "source": "cloud",
+       "source_label": "billing_webhook_cloud",
+       "event_type": "billing_event",
+       "age_days": 1,
+       "payload": {
+        "type": "data cap overage \u2014 monthly allowance exceeded",
+        "overage_gb": 4.2,
+        "recommended_plan": "unlimited 5G upgrade"
+       },
+       "serialized": "cloud event \u2014 billing event. type: data cap overage \u2014 monthly allowance exceeded; overage gb: 4.2; recommended plan: unlimited 5G upgrade",
+       "sims": {
+        "upgrade_intent": 0.7536,
+        "engagement_depth": 0.7168,
+        "churn_risk": 0.7135
+       },
+       "affinities": {
+        "upgrade_intent": 0.4233,
+        "engagement_depth": 0.2932,
+        "churn_risk": 0.2835
+       },
+       "dominant": "upgrade_intent",
+       "strength": 0.7536,
+       "xy": [
+        0.5621,
+        0.478
+       ],
+       "top_fields": [
+        {
+         "field": "recommended_plan",
+         "delta": 0.0855
+        },
+        {
+         "field": "type",
+         "delta": -0.0049
+        },
+        {
+         "field": "overage_gb",
+         "delta": -0.0098
+        }
+       ]
+      },
+      {
+       "id": "b3",
+       "t_offset_ms": 4000,
+       "source": "device",
+       "source_label": "ios_sdk_edge",
+       "event_type": "network_probe",
+       "age_days": 0,
+       "payload": {
+        "action": "ran network speed test",
+        "result_mbps": 48,
+        "follow_up": "checked 5G coverage before choosing plan upgrade"
+       },
+       "serialized": "mobile app event \u2014 network probe. action: ran network speed test; result mbps: 48; follow up: checked 5G coverage before choosing plan upgrade",
+       "sims": {
+        "upgrade_intent": 0.7418,
+        "engagement_depth": 0.7813,
+        "churn_risk": 0.6796
+       },
+       "affinities": {
+        "upgrade_intent": 0.3311,
+        "engagement_depth": 0.4912,
+        "churn_risk": 0.1777
+       },
+       "dominant": "engagement_depth",
+       "strength": 0.7813,
+       "xy": [
+        0.2249,
+        0.5013
+       ],
+       "top_fields": [
+        {
+         "field": "follow_up",
+         "delta": 0.0363
+        },
+        {
+         "field": "action",
+         "delta": 0.0039
+        },
+        {
+         "field": "result_mbps",
+         "delta": -0.0096
+        }
+       ]
+      },
+      {
+       "id": "b4",
+       "t_offset_ms": 5800,
+       "source": "device",
+       "source_label": "ios_sdk_edge",
+       "event_type": "app_screen_dwell",
+       "age_days": 0,
+       "payload": {
+        "screen": "device upgrade eligibility checker",
+        "action": "checked trade-in value for current phone"
+       },
+       "serialized": "mobile app event \u2014 app screen dwell. screen: device upgrade eligibility checker; action: checked trade-in value for current phone",
+       "sims": {
+        "upgrade_intent": 0.7929,
+        "engagement_depth": 0.7191,
+        "churn_risk": 0.6582
+       },
+       "affinities": {
+        "upgrade_intent": 0.5753,
+        "engagement_depth": 0.2751,
+        "churn_risk": 0.1496
+       },
+       "dominant": "upgrade_intent",
+       "strength": 0.7929,
+       "xy": [
+        0.1512,
+        0.5134
+       ],
+       "top_fields": [
+        {
+         "field": "action",
+         "delta": 0.0468
+        },
+        {
+         "field": "screen",
+         "delta": 0.0404
+        }
+       ]
+      },
+      {
+       "id": "b5",
+       "t_offset_ms": 7600,
+       "source": "cloud",
+       "source_label": "segment_webhook_cloud",
+       "event_type": "web_visit",
+       "age_days": 2,
+       "payload": {
+        "url": "/plans/unlimited-premium-benefits",
+        "referrer": "google search \u2014 best unlimited 5g plan upgrade",
+        "pages_in_session": 3
+       },
+       "serialized": "cloud event \u2014 web visit. url: /plans/unlimited-premium-benefits; referrer: google search \u2014 best unlimited 5g plan upgrade; pages in session: 3",
+       "sims": {
+        "upgrade_intent": 0.7997,
+        "engagement_depth": 0.7159,
+        "churn_risk": 0.6643
+       },
+       "affinities": {
+        "upgrade_intent": 0.5914,
+        "engagement_depth": 0.2558,
+        "churn_risk": 0.1527
+       },
+       "dominant": "upgrade_intent",
+       "strength": 0.7997,
+       "xy": [
+        0.4396,
+        0.5774
+       ],
+       "top_fields": [
+        {
+         "field": "referrer",
+         "delta": 0.0422
+        },
+        {
+         "field": "url",
+         "delta": 0.0147
+        },
+        {
+         "field": "pages_in_session",
+         "delta": 0.0032
+        }
+       ]
+      },
+      {
+       "id": "b6",
+       "t_offset_ms": 9200,
+       "source": "cloud",
+       "source_label": "support_webhook_cloud",
+       "event_type": "support_ticket",
+       "age_days": 12,
+       "payload": {
+        "topic": "asked about cancellation fees when leaving",
+        "channel": "chat",
+        "resolved": "closed \u2014 no action taken"
+       },
+       "serialized": "cloud event \u2014 support ticket. topic: asked about cancellation fees when leaving; channel: chat; resolved: closed \u2014 no action taken",
+       "sims": {
+        "upgrade_intent": 0.6068,
+        "engagement_depth": 0.5969,
+        "churn_risk": 0.747
+       },
+       "affinities": {
+        "upgrade_intent": 0.1675,
+        "engagement_depth": 0.1517,
+        "churn_risk": 0.6809
+       },
+       "dominant": "churn_risk",
+       "strength": 0.747,
+       "xy": [
+        0.8889,
+        0.1796
+       ],
+       "top_fields": [
+        {
+         "field": "topic",
+         "delta": 0.0924
+        },
+        {
+         "field": "channel",
+         "delta": 0.0022
+        },
+        {
+         "field": "resolved",
+         "delta": -0.0097
+        }
+       ]
+      }
      ]
     },
     {
-     "phrase": "checking device upgrade eligibility in the account app",
-     "xy": [
-      0.3343,
-      0.6941
+     "id": "conflict",
+     "label": "Asynchronous conflict",
+     "button": "\u26a1 Inject conflicting signals",
+     "description": "Fresh on-device signals scream upgrade; stale cloud signals say churn (a cancel enquiry and a failed payment from last week). Time decay resolves the tie \u2014 and honestly lowers confidence.",
+     "events": [
+      {
+       "id": "c1",
+       "t_offset_ms": 400,
+       "source": "device",
+       "source_label": "ios_sdk_edge",
+       "event_type": "app_screen_dwell",
+       "age_days": 0,
+       "payload": {
+        "screen": "unlimited premium plan pricing",
+        "dwell_seconds": 420,
+        "local_velocity": "high"
+       },
+       "serialized": "mobile app event \u2014 app screen dwell. screen: unlimited premium plan pricing; dwell seconds: 420; local velocity: high",
+       "sims": {
+        "upgrade_intent": 0.7078,
+        "engagement_depth": 0.7312,
+        "churn_risk": 0.6138
+       },
+       "affinities": {
+        "upgrade_intent": 0.3767,
+        "engagement_depth": 0.4761,
+        "churn_risk": 0.1472
+       },
+       "dominant": "engagement_depth",
+       "strength": 0.7312,
+       "xy": [
+        0.1215,
+        0.3138
+       ],
+       "top_fields": [
+        {
+         "field": "screen",
+         "delta": 0.0096
+        },
+        {
+         "field": "local_velocity",
+         "delta": 0.0015
+        },
+        {
+         "field": "dwell_seconds",
+         "delta": -0.0089
+        }
+       ]
+      },
+      {
+       "id": "c2",
+       "t_offset_ms": 2200,
+       "source": "cloud",
+       "source_label": "support_webhook_cloud",
+       "event_type": "support_ticket",
+       "age_days": 9,
+       "payload": {
+        "topic": "asked how to cancel service",
+        "sentiment": "negative",
+        "channel": "chat"
+       },
+       "serialized": "cloud event \u2014 support ticket. topic: asked how to cancel service; sentiment: negative; channel: chat",
+       "sims": {
+        "upgrade_intent": 0.6136,
+        "engagement_depth": 0.6401,
+        "churn_risk": 0.787
+       },
+       "affinities": {
+        "upgrade_intent": 0.1255,
+        "engagement_depth": 0.1636,
+        "churn_risk": 0.7109
+       },
+       "dominant": "churn_risk",
+       "strength": 0.787,
+       "xy": [
+        0.9239,
+        0.1443
+       ],
+       "top_fields": [
+        {
+         "field": "topic",
+         "delta": 0.0884
+        },
+        {
+         "field": "sentiment",
+         "delta": 0.0211
+        },
+        {
+         "field": "channel",
+         "delta": -0.0021
+        }
+       ]
+      },
+      {
+       "id": "c3",
+       "t_offset_ms": 4000,
+       "source": "device",
+       "source_label": "ios_sdk_edge",
+       "event_type": "cart_event",
+       "age_days": 0,
+       "payload": {
+        "action": "added premium data add-on to cart",
+        "value_usd": 25
+       },
+       "serialized": "mobile app event \u2014 cart event. action: added premium data add-on to cart; value usd: 25",
+       "sims": {
+        "upgrade_intent": 0.7194,
+        "engagement_depth": 0.6978,
+        "churn_risk": 0.6237
+       },
+       "affinities": {
+        "upgrade_intent": 0.4567,
+        "engagement_depth": 0.368,
+        "churn_risk": 0.1753
+       },
+       "dominant": "upgrade_intent",
+       "strength": 0.7194,
+       "xy": [
+        0.2925,
+        0.3245
+       ],
+       "top_fields": [
+        {
+         "field": "action",
+         "delta": 0.074
+        },
+        {
+         "field": "value_usd",
+         "delta": -0.0032
+        }
+       ]
+      },
+      {
+       "id": "c4",
+       "t_offset_ms": 5800,
+       "source": "cloud",
+       "source_label": "billing_webhook_cloud",
+       "event_type": "billing_event",
+       "age_days": 6,
+       "payload": {
+        "type": "payment failed",
+        "amount_usd": 68.5,
+        "retry": "pending"
+       },
+       "serialized": "cloud event \u2014 billing event. type: payment failed; amount usd: 68.5; retry: pending",
+       "sims": {
+        "upgrade_intent": 0.6105,
+        "engagement_depth": 0.5974,
+        "churn_risk": 0.6948
+       },
+       "affinities": {
+        "upgrade_intent": 0.2381,
+        "engagement_depth": 0.2089,
+        "churn_risk": 0.553
+       },
+       "dominant": "churn_risk",
+       "strength": 0.6948,
+       "xy": [
+        0.7115,
+        0.176
+       ],
+       "top_fields": [
+        {
+         "field": "type",
+         "delta": 0.016
+        },
+        {
+         "field": "amount_usd",
+         "delta": 0.0034
+        },
+        {
+         "field": "retry",
+         "delta": -0.0043
+        }
+       ]
+      },
+      {
+       "id": "c5",
+       "t_offset_ms": 7600,
+       "source": "device",
+       "source_label": "ios_sdk_edge",
+       "event_type": "app_screen_dwell",
+       "age_days": 0,
+       "payload": {
+        "screen": "checkout \u2014 plan upgrade review order",
+        "step": "review order"
+       },
+       "serialized": "mobile app event \u2014 app screen dwell. screen: checkout \u2014 plan upgrade review order; step: review order",
+       "sims": {
+        "upgrade_intent": 0.7712,
+        "engagement_depth": 0.7218,
+        "churn_risk": 0.6695
+       },
+       "affinities": {
+        "upgrade_intent": 0.5072,
+        "engagement_depth": 0.3094,
+        "churn_risk": 0.1834
+       },
+       "dominant": "upgrade_intent",
+       "strength": 0.7712,
+       "xy": [
+        0.2316,
+        0.387
+       ],
+       "top_fields": [
+        {
+         "field": "screen",
+         "delta": 0.1003
+        },
+        {
+         "field": "step",
+         "delta": -0.0182
+        }
+       ]
+      },
+      {
+       "id": "c6",
+       "t_offset_ms": 9400,
+       "source": "cloud",
+       "source_label": "segment_webhook_cloud",
+       "event_type": "web_visit",
+       "age_days": 9,
+       "payload": {
+        "url": "/support/how-to-cancel",
+        "referrer": "direct"
+       },
+       "serialized": "cloud event \u2014 web visit. url: /support/how-to-cancel; referrer: direct",
+       "sims": {
+        "upgrade_intent": 0.5851,
+        "engagement_depth": 0.6336,
+        "churn_risk": 0.6849
+       },
+       "affinities": {
+        "upgrade_intent": 0.1874,
+        "engagement_depth": 0.3044,
+        "churn_risk": 0.5082
+       },
+       "dominant": "churn_risk",
+       "strength": 0.6849,
+       "xy": [
+        0.7866,
+        0.06
+       ],
+       "top_fields": [
+        {
+         "field": "url",
+         "delta": 0.0829
+        },
+        {
+         "field": "referrer",
+         "delta": 0.0214
+        }
+       ]
+      }
      ]
     },
     {
-     "phrase": "viewing 5G unlimited plan pricing page",
-     "xy": [
-      0.3912,
-      0.9154
-     ]
-    },
-    {
-     "phrase": "estimating the monthly cost of upgrading my plan",
-     "xy": [
-      0.5626,
-      0.8455
-     ]
-    },
-    {
-     "phrase": "browsing new phone deals and trade-in offers",
-     "xy": [
-      0.3468,
-      0.8233
-     ]
-    },
-    {
-     "phrase": "adding a premium data add-on to the cart",
-     "xy": [
-      0.4592,
-      0.6886
-     ]
-    },
-    {
-     "phrase": "checking trade-in value for my current phone",
-     "xy": [
-      0.4434,
-      0.8435
-     ]
-    },
-    {
-     "phrase": "reading about unlimited plan benefits and perks",
-     "xy": [
-      0.5373,
-      0.8896
-     ]
-    },
-    {
-     "phrase": "reviewing a plan upgrade order at checkout",
-     "xy": [
-      0.5018,
-      0.7787
+     "id": "sparse",
+     "label": "Sparse / drifting signals",
+     "button": "\ud83d\uded1 Feed sparse, drifting signals",
+     "description": "Weak, stale, contradictory signals. The honest answer is \"we don't know\" \u2014 confidence falls below the 70% floor and the system refuses to emit a segment. Guardrails over guesses.",
+     "events": [
+      {
+       "id": "s1",
+       "t_offset_ms": 400,
+       "source": "device",
+       "source_label": "ios_sdk_edge",
+       "event_type": "app_open",
+       "age_days": 4,
+       "payload": {
+        "screen": "home dashboard",
+        "dwell_seconds": 12
+       },
+       "serialized": "mobile app event \u2014 app open. screen: home dashboard; dwell seconds: 12",
+       "sims": {
+        "upgrade_intent": 0.5936,
+        "engagement_depth": 0.7293,
+        "churn_risk": 0.5638
+       },
+       "affinities": {
+        "upgrade_intent": 0.1777,
+        "engagement_depth": 0.6904,
+        "churn_risk": 0.1319
+       },
+       "dominant": "engagement_depth",
+       "strength": 0.7293,
+       "xy": [
+        0.0716,
+        0.0814
+       ],
+       "top_fields": [
+        {
+         "field": "screen",
+         "delta": 0.0105
+        },
+        {
+         "field": "dwell_seconds",
+         "delta": -0.0183
+        }
+       ]
+      },
+      {
+       "id": "s2",
+       "t_offset_ms": 2200,
+       "source": "cloud",
+       "source_label": "segment_webhook_cloud",
+       "event_type": "web_visit",
+       "age_days": 11,
+       "payload": {
+        "url": "/support/articles/roaming-charges",
+        "referrer": "email"
+       },
+       "serialized": "cloud event \u2014 web visit. url: /support/articles/roaming-charges; referrer: email",
+       "sims": {
+        "upgrade_intent": 0.6742,
+        "engagement_depth": 0.7056,
+        "churn_risk": 0.6974
+       },
+       "affinities": {
+        "upgrade_intent": 0.2755,
+        "engagement_depth": 0.3772,
+        "churn_risk": 0.3474
+       },
+       "dominant": "engagement_depth",
+       "strength": 0.7056,
+       "xy": [
+        0.6391,
+        0.252
+       ],
+       "top_fields": [
+        {
+         "field": "url",
+         "delta": 0.0627
+        },
+        {
+         "field": "referrer",
+         "delta": 0.0012
+        }
+       ]
+      },
+      {
+       "id": "s3",
+       "t_offset_ms": 4000,
+       "source": "device",
+       "source_label": "ios_sdk_edge",
+       "event_type": "app_screen_dwell",
+       "age_days": 7,
+       "payload": {
+        "screen": "bill summary",
+        "dwell_seconds": 25
+       },
+       "serialized": "mobile app event \u2014 app screen dwell. screen: bill summary; dwell seconds: 25",
+       "sims": {
+        "upgrade_intent": 0.6694,
+        "engagement_depth": 0.7538,
+        "churn_risk": 0.6591
+       },
+       "affinities": {
+        "upgrade_intent": 0.2366,
+        "engagement_depth": 0.5501,
+        "churn_risk": 0.2133
+       },
+       "dominant": "engagement_depth",
+       "strength": 0.7538,
+       "xy": [
+        0.1686,
+        0.1668
+       ],
+       "top_fields": [
+        {
+         "field": "screen",
+         "delta": 0.0397
+        },
+        {
+         "field": "dwell_seconds",
+         "delta": 0.0019
+        }
+       ]
+      },
+      {
+       "id": "s4",
+       "t_offset_ms": 5800,
+       "source": "cloud",
+       "source_label": "marketing_webhook_cloud",
+       "event_type": "marketing_event",
+       "age_days": 13,
+       "payload": {
+        "type": "email opened",
+        "campaign": "competitor price match offer"
+       },
+       "serialized": "cloud event \u2014 marketing event. type: email opened; campaign: competitor price match offer",
+       "sims": {
+        "upgrade_intent": 0.6472,
+        "engagement_depth": 0.6331,
+        "churn_risk": 0.6622
+       },
+       "affinities": {
+        "upgrade_intent": 0.3301,
+        "engagement_depth": 0.2866,
+        "churn_risk": 0.3833
+       },
+       "dominant": "churn_risk",
+       "strength": 0.6622,
+       "xy": [
+        0.5768,
+        0.2643
+       ],
+       "top_fields": [
+        {
+         "field": "campaign",
+         "delta": 0.0477
+        },
+        {
+         "field": "type",
+         "delta": 0.0092
+        }
+       ]
+      },
+      {
+       "id": "s5",
+       "t_offset_ms": 7600,
+       "source": "device",
+       "source_label": "ios_sdk_edge",
+       "event_type": "app_open",
+       "age_days": 5,
+       "payload": {
+        "screen": "coverage map",
+        "dwell_seconds": 18
+       },
+       "serialized": "mobile app event \u2014 app open. screen: coverage map; dwell seconds: 18",
+       "sims": {
+        "upgrade_intent": 0.6403,
+        "engagement_depth": 0.7791,
+        "churn_risk": 0.6061
+       },
+       "affinities": {
+        "upgrade_intent": 0.1748,
+        "engagement_depth": 0.7009,
+        "churn_risk": 0.1243
+       },
+       "dominant": "engagement_depth",
+       "strength": 0.7791,
+       "xy": [
+        0.06,
+        0.1934
+       ],
+       "top_fields": [
+        {
+         "field": "screen",
+         "delta": 0.0493
+        },
+        {
+         "field": "dwell_seconds",
+         "delta": -0.0051
+        }
+       ]
+      }
      ]
     }
    ]
   },
   {
-   "id": "engagement_depth",
-   "label": "Engagement Depth",
-   "short": "Engagement",
-   "centroid_xy": [
-    0.3236,
-    0.5406
+   "id": "marketplace",
+   "label": "Marketplace",
+   "description": "Buyer WISMO risk vs delivery confidence \u2014 logistics outcomes",
+   "entity": {
+    "id": "buyer_74112",
+    "summary": "order #A-8817 \u00b7 promised Jul 15 \u00b7 3 prior orders"
+   },
+   "segments": {
+    "positive": "WISMO Imminent \u2014 Proactive Outreach",
+    "negative": "On Track \u2014 Don't Interfere",
+    "indeterminate": "Indeterminate \u2014 General Queue"
+   },
+   "attr_scale": {
+    "left": "delivery confidence",
+    "right": "WISMO risk"
+   },
+   "params": {
+    "lambda_decay_per_day": 0.45,
+    "source_trust": {
+     "device": 1.0,
+     "cloud": 0.85
+    },
+    "softmax_temp": 0.1,
+    "sigmoid_k": 10.0,
+    "confidence_floor_pct": 70.0,
+    "drift_scale": 0.155,
+    "drift_limit": 1.5,
+    "latency_budget_ms": 250
+   },
+   "eval": {
+    "methodology": "Illustrative offline evaluation on 62 simulated held-out sessions with authored ground-truth labels. Included to show the shape of a model health ledger, not as a real benchmark.",
+    "rows": [
+     {
+      "segment": "WISMO Imminent \u2014 Proactive Outreach",
+      "precision": 0.91,
+      "recall": 0.84,
+      "n": 38
+     },
+     {
+      "segment": "On Track \u2014 Don't Interfere",
+      "precision": 0.87,
+      "recall": 0.79,
+      "n": 24
+     }
+    ],
+    "suppression_rate_pct": 18
+   },
+   "axes": [
+    {
+     "id": "wismo_risk",
+     "label": "WISMO Risk",
+     "short": "WISMO",
+     "polarity": "positive",
+     "centroid_xy": [
+      0.2152,
+      0.4368
+     ],
+     "anchors": [
+      {
+       "phrase": "checking the order tracking page again and again",
+       "xy": [
+        0.3497,
+        0.2961
+       ]
+      },
+      {
+       "phrase": "asked where is my order",
+       "xy": [
+        0.2755,
+        0.2475
+       ]
+      },
+      {
+       "phrase": "searching how to contact the courier",
+       "xy": [
+        0.362,
+        0.5976
+       ]
+      },
+      {
+       "phrase": "worried the package is delayed",
+       "xy": [
+        0.06,
+        0.5199
+       ]
+      },
+      {
+       "phrase": "refreshing the delivery status repeatedly",
+       "xy": [
+        0.2441,
+        0.447
+       ]
+      },
+      {
+       "phrase": "complained about a late delivery",
+       "xy": [
+        0.0815,
+        0.3906
+       ]
+      },
+      {
+       "phrase": "opened the courier contact support page",
+       "xy": [
+        0.55,
+        0.5331
+       ]
+      },
+      {
+       "phrase": "package still not arrived and getting impatient",
+       "xy": [
+        0.0902,
+        0.4345
+       ]
+      }
+     ]
+    },
+    {
+     "id": "order_engagement",
+     "label": "Order Engagement",
+     "short": "Engagement",
+     "polarity": "neutral",
+     "centroid_xy": [
+      0.5766,
+      0.1213
+     ],
+     "anchors": [
+      {
+       "phrase": "opened the order details page",
+       "xy": [
+        0.6015,
+        0.1705
+       ]
+      },
+      {
+       "phrase": "browsing the store while waiting for a delivery",
+       "xy": [
+        0.3225,
+        0.1813
+       ]
+      },
+      {
+       "phrase": "viewed the past orders list",
+       "xy": [
+        0.4652,
+        0.06
+       ]
+      },
+      {
+       "phrase": "read the returns policy casually",
+       "xy": [
+        0.4267,
+        0.169
+       ]
+      },
+      {
+       "phrase": "added items to the wishlist",
+       "xy": [
+        0.4614,
+        0.1262
+       ]
+      },
+      {
+       "phrase": "opened the app from a promotion",
+       "xy": [
+        0.8711,
+        0.306
+       ]
+      },
+      {
+       "phrase": "checked loyalty points balance",
+       "xy": [
+        0.5665,
+        0.2494
+       ]
+      },
+      {
+       "phrase": "normal shopping session in the app",
+       "xy": [
+        0.743,
+        0.1602
+       ]
+      }
+     ]
+    },
+    {
+     "id": "delivery_confidence",
+     "label": "Delivery Confidence",
+     "short": "Confidence",
+     "polarity": "negative",
+     "centroid_xy": [
+      0.1546,
+      0.5012
+     ],
+     "anchors": [
+      {
+       "phrase": "carrier scan shows the package on schedule",
+       "xy": [
+        0.2279,
+        0.6573
+       ]
+      },
+      {
+       "phrase": "out for delivery and arriving on time",
+       "xy": [
+        0.1332,
+        0.4888
+       ]
+      },
+      {
+       "phrase": "delivery notifications are enabled and working",
+       "xy": [
+        0.3015,
+        0.584
+       ]
+      },
+      {
+       "phrase": "package picked up on time by the courier",
+       "xy": [
+        0.122,
+        0.6132
+       ]
+      },
+      {
+       "phrase": "previous orders all arrived on time",
+       "xy": [
+        0.1696,
+        0.2133
+       ]
+      },
+      {
+       "phrase": "estimated delivery date confirmed",
+       "xy": [
+        0.172,
+        0.5155
+       ]
+      },
+      {
+       "phrase": "buyer opted into automatic delivery updates",
+       "xy": [
+        0.3109,
+        0.4232
+       ]
+      },
+      {
+       "phrase": "smooth delivery experience with no issues",
+       "xy": [
+        0.1808,
+        0.4088
+       ]
+      }
+     ]
+    }
    ],
-   "anchors": [
+   "scenarios": [
     {
-     "phrase": "long focused session inside the carrier account app",
-     "xy": [
-      0.2618,
-      0.4176
+     "id": "baseline",
+     "label": "Delivery delay session",
+     "button": "\u25b6 Play delivery-delay session",
+     "description": "A carrier delay lands while the buyer is already refreshing the tracking page. Signals agree \u2014 WISMO contact is imminent, so the system moves before the ticket exists.",
+     "events": [
+      {
+       "id": "m_b1",
+       "t_offset_ms": 400,
+       "source": "device",
+       "source_label": "app_sdk_edge",
+       "event_type": "tracking_page_view",
+       "age_days": 0,
+       "payload": {
+        "screen": "order tracking \u2014 where is my package",
+        "action": "asked where is my order",
+        "views_today": 4,
+        "dwell_seconds": 95
+       },
+       "serialized": "mobile app event \u2014 tracking page view. screen: order tracking \u2014 where is my package; action: asked where is my order; views today: 4; dwell seconds: 95",
+       "sims": {
+        "wismo_risk": 0.8095,
+        "order_engagement": 0.7754,
+        "delivery_confidence": 0.7322
+       },
+       "affinities": {
+        "wismo_risk": 0.4603,
+        "order_engagement": 0.3273,
+        "delivery_confidence": 0.2125
+       },
+       "dominant": "wismo_risk",
+       "strength": 0.8095,
+       "xy": [
+        0.6379,
+        0.4652
+       ],
+       "top_fields": [
+        {
+         "field": "screen",
+         "delta": 0.0341
+        },
+        {
+         "field": "action",
+         "delta": 0.031
+        },
+        {
+         "field": "dwell_seconds",
+         "delta": 0.0028
+        },
+        {
+         "field": "views_today",
+         "delta": -0.0023
+        }
+       ]
+      },
+      {
+       "id": "m_b2",
+       "t_offset_ms": 2200,
+       "source": "cloud",
+       "source_label": "carrier_webhook_cloud",
+       "event_type": "carrier_webhook",
+       "age_days": 0,
+       "payload": {
+        "status": "exception \u2014 package delayed at sort facility",
+        "carrier": "regional express",
+        "new_eta": "2 days late"
+       },
+       "serialized": "cloud event \u2014 carrier webhook. status: exception \u2014 package delayed at sort facility; carrier: regional express; new eta: 2 days late",
+       "sims": {
+        "wismo_risk": 0.7601,
+        "order_engagement": 0.605,
+        "delivery_confidence": 0.7215
+       },
+       "affinities": {
+        "wismo_risk": 0.5288,
+        "order_engagement": 0.112,
+        "delivery_confidence": 0.3592
+       },
+       "dominant": "wismo_risk",
+       "strength": 0.7601,
+       "xy": [
+        0.3003,
+        0.8859
+       ],
+       "top_fields": [
+        {
+         "field": "status",
+         "delta": 0.0354
+        },
+        {
+         "field": "new_eta",
+         "delta": 0.0013
+        },
+        {
+         "field": "carrier",
+         "delta": -0.0017
+        }
+       ]
+      },
+      {
+       "id": "m_b3",
+       "t_offset_ms": 4000,
+       "source": "device",
+       "source_label": "app_sdk_edge",
+       "event_type": "app_search",
+       "age_days": 0,
+       "payload": {
+        "query": "contact courier about delayed order",
+        "results_clicked": 2
+       },
+       "serialized": "mobile app event \u2014 app search. query: contact courier about delayed order; results clicked: 2",
+       "sims": {
+        "wismo_risk": 0.8154,
+        "order_engagement": 0.7238,
+        "delivery_confidence": 0.7253
+       },
+       "affinities": {
+        "wismo_risk": 0.5536,
+        "order_engagement": 0.2215,
+        "delivery_confidence": 0.2249
+       },
+       "dominant": "wismo_risk",
+       "strength": 0.8154,
+       "xy": [
+        0.6065,
+        0.616
+       ],
+       "top_fields": [
+        {
+         "field": "query",
+         "delta": 0.2608
+        },
+        {
+         "field": "results_clicked",
+         "delta": 0.0105
+        }
+       ]
+      },
+      {
+       "id": "m_b4",
+       "t_offset_ms": 5800,
+       "source": "device",
+       "source_label": "app_sdk_edge",
+       "event_type": "tracking_page_view",
+       "age_days": 0,
+       "payload": {
+        "screen": "order tracking \u2014 refreshed again within the hour",
+        "concern": "worried the package might be lost",
+        "views_today": 5
+       },
+       "serialized": "mobile app event \u2014 tracking page view. screen: order tracking \u2014 refreshed again within the hour; concern: worried the package might be lost; views today: 5",
+       "sims": {
+        "wismo_risk": 0.8132,
+        "order_engagement": 0.7305,
+        "delivery_confidence": 0.7269
+       },
+       "affinities": {
+        "wismo_risk": 0.5379,
+        "order_engagement": 0.2351,
+        "delivery_confidence": 0.227
+       },
+       "dominant": "wismo_risk",
+       "strength": 0.8132,
+       "xy": [
+        0.5341,
+        0.5462
+       ],
+       "top_fields": [
+        {
+         "field": "concern",
+         "delta": 0.1065
+        },
+        {
+         "field": "screen",
+         "delta": 0.0225
+        },
+        {
+         "field": "views_today",
+         "delta": 0.0001
+        }
+       ]
+      },
+      {
+       "id": "m_b5",
+       "t_offset_ms": 7600,
+       "source": "cloud",
+       "source_label": "crm_webhook_cloud",
+       "event_type": "crm_event",
+       "age_days": 1,
+       "payload": {
+        "type": "delivery feedback from last order",
+        "note": "buyer rated delivery speed 2 of 5 stars"
+       },
+       "serialized": "cloud event \u2014 crm event. type: delivery feedback from last order; note: buyer rated delivery speed 2 of 5 stars",
+       "sims": {
+        "wismo_risk": 0.7336,
+        "order_engagement": 0.6857,
+        "delivery_confidence": 0.733
+       },
+       "affinities": {
+        "wismo_risk": 0.3828,
+        "order_engagement": 0.237,
+        "delivery_confidence": 0.3803
+       },
+       "dominant": "wismo_risk",
+       "strength": 0.7336,
+       "xy": [
+        0.4327,
+        0.6611
+       ],
+       "top_fields": [
+        {
+         "field": "type",
+         "delta": 0.0491
+        },
+        {
+         "field": "note",
+         "delta": 0.0185
+        }
+       ]
+      }
      ]
     },
     {
-     "phrase": "opening the mobile app every day this week",
-     "xy": [
-      0.2126,
-      0.3012
+     "id": "conflict",
+     "label": "Anxious buyer, calm carrier",
+     "button": "\u26a1 Inject conflicting signals",
+     "description": "The carrier's day-old scans say everything is on time; the buyer's live behavior says they're getting anxious anyway. Fast decay sides with the fresh anxiety \u2014 but automation is muted while sources disagree.",
+     "events": [
+      {
+       "id": "m_c1",
+       "t_offset_ms": 400,
+       "source": "device",
+       "source_label": "app_sdk_edge",
+       "event_type": "tracking_page_view",
+       "age_days": 0,
+       "payload": {
+        "screen": "order tracking \u2014 checked again this morning",
+        "concern": "starting to worry about the delay",
+        "views_today": 3
+       },
+       "serialized": "mobile app event \u2014 tracking page view. screen: order tracking \u2014 checked again this morning; concern: starting to worry about the delay; views today: 3",
+       "sims": {
+        "wismo_risk": 0.8306,
+        "order_engagement": 0.7509,
+        "delivery_confidence": 0.7248
+       },
+       "affinities": {
+        "wismo_risk": 0.5563,
+        "order_engagement": 0.2506,
+        "delivery_confidence": 0.1931
+       },
+       "dominant": "wismo_risk",
+       "strength": 0.8306,
+       "xy": [
+        0.5326,
+        0.525
+       ],
+       "top_fields": [
+        {
+         "field": "concern",
+         "delta": 0.1159
+        },
+        {
+         "field": "screen",
+         "delta": 0.0978
+        },
+        {
+         "field": "views_today",
+         "delta": -0.0048
+        }
+       ]
+      },
+      {
+       "id": "m_c2",
+       "t_offset_ms": 2200,
+       "source": "cloud",
+       "source_label": "carrier_webhook_cloud",
+       "event_type": "carrier_webhook",
+       "age_days": 2,
+       "payload": {
+        "status": "scan on schedule \u2014 arriving on time",
+        "checkpoint": "regional hub departure"
+       },
+       "serialized": "cloud event \u2014 carrier webhook. status: scan on schedule \u2014 arriving on time; checkpoint: regional hub departure",
+       "sims": {
+        "wismo_risk": 0.6764,
+        "order_engagement": 0.6276,
+        "delivery_confidence": 0.7431
+       },
+       "affinities": {
+        "wismo_risk": 0.2807,
+        "order_engagement": 0.1723,
+        "delivery_confidence": 0.547
+       },
+       "dominant": "delivery_confidence",
+       "strength": 0.7431,
+       "xy": [
+        0.4307,
+        0.94
+       ],
+       "top_fields": [
+        {
+         "field": "status",
+         "delta": 0.1198
+        },
+        {
+         "field": "checkpoint",
+         "delta": -0.0532
+        }
+       ]
+      },
+      {
+       "id": "m_c3",
+       "t_offset_ms": 4000,
+       "source": "device",
+       "source_label": "app_sdk_edge",
+       "event_type": "app_search",
+       "age_days": 0,
+       "payload": {
+        "query": "how to contact courier support"
+       },
+       "serialized": "mobile app event \u2014 app search. query: how to contact courier support",
+       "sims": {
+        "wismo_risk": 0.6935,
+        "order_engagement": 0.6195,
+        "delivery_confidence": 0.6205
+       },
+       "affinities": {
+        "wismo_risk": 0.5105,
+        "order_engagement": 0.2435,
+        "delivery_confidence": 0.2461
+       },
+       "dominant": "wismo_risk",
+       "strength": 0.6935,
+       "xy": [
+        0.7526,
+        0.7436
+       ],
+       "top_fields": [
+        {
+         "field": "query",
+         "delta": 0.1719
+        }
+       ]
+      },
+      {
+       "id": "m_c4",
+       "t_offset_ms": 5800,
+       "source": "cloud",
+       "source_label": "carrier_webhook_cloud",
+       "event_type": "carrier_webhook",
+       "age_days": 2,
+       "payload": {
+        "status": "picked up on time by the courier",
+        "checkpoint": "origin scan"
+       },
+       "serialized": "cloud event \u2014 carrier webhook. status: picked up on time by the courier; checkpoint: origin scan",
+       "sims": {
+        "wismo_risk": 0.7357,
+        "order_engagement": 0.6569,
+        "delivery_confidence": 0.7922
+       },
+       "affinities": {
+        "wismo_risk": 0.3111,
+        "order_engagement": 0.1415,
+        "delivery_confidence": 0.5474
+       },
+       "dominant": "delivery_confidence",
+       "strength": 0.7922,
+       "xy": [
+        0.3996,
+        0.9108
+       ],
+       "top_fields": [
+        {
+         "field": "status",
+         "delta": 0.1416
+        },
+        {
+         "field": "checkpoint",
+         "delta": -0.0159
+        }
+       ]
+      },
+      {
+       "id": "m_c5",
+       "t_offset_ms": 7600,
+       "source": "device",
+       "source_label": "app_sdk_edge",
+       "event_type": "tracking_page_view",
+       "age_days": 0,
+       "payload": {
+        "screen": "order tracking \u2014 courier contact page opened"
+       },
+       "serialized": "mobile app event \u2014 tracking page view. screen: order tracking \u2014 courier contact page opened",
+       "sims": {
+        "wismo_risk": 0.7751,
+        "order_engagement": 0.758,
+        "delivery_confidence": 0.7341
+       },
+       "affinities": {
+        "wismo_risk": 0.399,
+        "order_engagement": 0.3362,
+        "delivery_confidence": 0.2648
+       },
+       "dominant": "wismo_risk",
+       "strength": 0.7751,
+       "xy": [
+        0.7395,
+        0.6011
+       ],
+       "top_fields": [
+        {
+         "field": "screen",
+         "delta": 0.2026
+        }
+       ]
+      },
+      {
+       "id": "m_c6",
+       "t_offset_ms": 9400,
+       "source": "cloud",
+       "source_label": "crm_webhook_cloud",
+       "event_type": "crm_event",
+       "age_days": 2,
+       "payload": {
+        "type": "notification opt-in confirmed",
+        "note": "buyer receives automatic delivery updates"
+       },
+       "serialized": "cloud event \u2014 crm event. type: notification opt-in confirmed; note: buyer receives automatic delivery updates",
+       "sims": {
+        "wismo_risk": 0.681,
+        "order_engagement": 0.6951,
+        "delivery_confidence": 0.767
+       },
+       "affinities": {
+        "wismo_risk": 0.2215,
+        "order_engagement": 0.2551,
+        "delivery_confidence": 0.5234
+       },
+       "dominant": "delivery_confidence",
+       "strength": 0.767,
+       "xy": [
+        0.519,
+        0.7246
+       ],
+       "top_fields": [
+        {
+         "field": "note",
+         "delta": 0.1359
+        },
+        {
+         "field": "type",
+         "delta": 0.0107
+        }
+       ]
+      }
      ]
     },
     {
-     "phrase": "running a network speed test from the app",
-     "xy": [
-      0.1934,
-      0.505
-     ]
-    },
-    {
-     "phrase": "exploring the 5G coverage map in detail",
-     "xy": [
-      0.3215,
-      0.7782
-     ]
-    },
-    {
-     "phrase": "reading support documentation thoroughly",
-     "xy": [
-      0.6191,
-      0.5893
-     ]
-    },
-    {
-     "phrase": "reviewing data usage on the account dashboard",
-     "xy": [
-      0.4193,
-      0.624
-     ]
-    },
-    {
-     "phrase": "configuring account settings and preferences",
-     "xy": [
-      0.5934,
-      0.5685
-     ]
-    },
-    {
-     "phrase": "heavy mobile data usage streaming video",
-     "xy": [
-      0.327,
-      0.4819
+     "id": "sparse",
+     "label": "Sparse / early order",
+     "button": "\ud83d\uded1 Feed sparse, early signals",
+     "description": "Label barely created, one casual app open. Nothing to infer from \u2014 the honest answer is the general queue, not a guessed intervention.",
+     "events": [
+      {
+       "id": "m_s1",
+       "t_offset_ms": 400,
+       "source": "device",
+       "source_label": "app_sdk_edge",
+       "event_type": "app_open",
+       "age_days": 1,
+       "payload": {
+        "screen": "home",
+        "dwell_seconds": 8
+       },
+       "serialized": "mobile app event \u2014 app open. screen: home; dwell seconds: 8",
+       "sims": {
+        "wismo_risk": 0.5527,
+        "order_engagement": 0.6628,
+        "delivery_confidence": 0.5627
+       },
+       "affinities": {
+        "wismo_risk": 0.1956,
+        "order_engagement": 0.5883,
+        "delivery_confidence": 0.2161
+       },
+       "dominant": "order_engagement",
+       "strength": 0.6628,
+       "xy": [
+        0.94,
+        0.525
+       ],
+       "top_fields": [
+        {
+         "field": "screen",
+         "delta": -0.0011
+        },
+        {
+         "field": "dwell_seconds",
+         "delta": -0.0101
+        }
+       ]
+      },
+      {
+       "id": "m_s2",
+       "t_offset_ms": 2200,
+       "source": "cloud",
+       "source_label": "carrier_webhook_cloud",
+       "event_type": "carrier_webhook",
+       "age_days": 3,
+       "payload": {
+        "status": "label created",
+        "checkpoint": "pre-transit"
+       },
+       "serialized": "cloud event \u2014 carrier webhook. status: label created; checkpoint: pre-transit",
+       "sims": {
+        "wismo_risk": 0.6683,
+        "order_engagement": 0.6109,
+        "delivery_confidence": 0.6796
+       },
+       "affinities": {
+        "wismo_risk": 0.3727,
+        "order_engagement": 0.2099,
+        "delivery_confidence": 0.4175
+       },
+       "dominant": "delivery_confidence",
+       "strength": 0.6796,
+       "xy": [
+        0.4928,
+        0.9355
+       ],
+       "top_fields": [
+        {
+         "field": "checkpoint",
+         "delta": 0.0181
+        },
+        {
+         "field": "status",
+         "delta": 0.016
+        }
+       ]
+      },
+      {
+       "id": "m_s3",
+       "t_offset_ms": 4000,
+       "source": "device",
+       "source_label": "app_sdk_edge",
+       "event_type": "order_history_view",
+       "age_days": 2,
+       "payload": {
+        "screen": "past orders list",
+        "dwell_seconds": 20
+       },
+       "serialized": "mobile app event \u2014 order history view. screen: past orders list; dwell seconds: 20",
+       "sims": {
+        "wismo_risk": 0.6497,
+        "order_engagement": 0.7631,
+        "delivery_confidence": 0.6478
+       },
+       "affinities": {
+        "wismo_risk": 0.1965,
+        "order_engagement": 0.6108,
+        "delivery_confidence": 0.1927
+       },
+       "dominant": "order_engagement",
+       "strength": 0.7631,
+       "xy": [
+        0.7955,
+        0.3117
+       ],
+       "top_fields": [
+        {
+         "field": "screen",
+         "delta": 0.0109
+        },
+        {
+         "field": "dwell_seconds",
+         "delta": -0.011
+        }
+       ]
+      },
+      {
+       "id": "m_s4",
+       "t_offset_ms": 5800,
+       "source": "cloud",
+       "source_label": "marketing_webhook_cloud",
+       "event_type": "marketing_event",
+       "age_days": 4,
+       "payload": {
+        "type": "email opened",
+        "campaign": "weekend deals"
+       },
+       "serialized": "cloud event \u2014 marketing event. type: email opened; campaign: weekend deals",
+       "sims": {
+        "wismo_risk": 0.5937,
+        "order_engagement": 0.6716,
+        "delivery_confidence": 0.6196
+       },
+       "affinities": {
+        "wismo_risk": 0.2234,
+        "order_engagement": 0.4872,
+        "delivery_confidence": 0.2894
+       },
+       "dominant": "order_engagement",
+       "strength": 0.6716,
+       "xy": [
+        0.7368,
+        0.7217
+       ],
+       "top_fields": [
+        {
+         "field": "type",
+         "delta": 0.052
+        },
+        {
+         "field": "campaign",
+         "delta": 0.0142
+        }
+       ]
+      }
      ]
     }
    ]
   },
   {
-   "id": "churn_risk",
-   "label": "Churn Risk",
-   "short": "Churn",
-   "centroid_xy": [
-    0.79,
-    0.6003
-   ],
-   "anchors": [
+   "id": "fintech",
+   "label": "Fintech",
+   "description": "Case escalation risk vs self-serve resolution \u2014 service routing",
+   "entity": {
+    "id": "cust_20981",
+    "summary": "dispute #D-4432 \u00b7 opened 2d ago \u00b7 premium account"
+   },
+   "segments": {
+    "positive": "Escalation Likely \u2014 Senior-Agent Routing",
+    "negative": "Self-Serve Track \u2014 Automated Resolution",
+    "indeterminate": "Indeterminate \u2014 Standard Queue"
+   },
+   "attr_scale": {
+    "left": "resolution confidence",
+    "right": "escalation risk"
+   },
+   "params": {
+    "lambda_decay_per_day": 0.13,
+    "source_trust": {
+     "device": 1.0,
+     "cloud": 0.85
+    },
+    "softmax_temp": 0.1,
+    "sigmoid_k": 8.0,
+    "confidence_floor_pct": 70.0,
+    "drift_scale": 0.19,
+    "drift_limit": 1.5,
+    "latency_budget_ms": 250
+   },
+   "eval": {
+    "methodology": "Illustrative offline evaluation on 62 simulated held-out sessions with authored ground-truth labels. Included to show the shape of a model health ledger, not as a real benchmark.",
+    "rows": [
+     {
+      "segment": "Escalation Likely \u2014 Senior-Agent Routing",
+      "precision": 0.91,
+      "recall": 0.84,
+      "n": 38
+     },
+     {
+      "segment": "Self-Serve Track \u2014 Automated Resolution",
+      "precision": 0.87,
+      "recall": 0.79,
+      "n": 24
+     }
+    ],
+    "suppression_rate_pct": 18
+   },
+   "axes": [
     {
-     "phrase": "contacting support asking how to cancel service",
-     "xy": [
-      0.94,
-      0.4142
+     "id": "escalation_risk",
+     "label": "Escalation Risk",
+     "short": "Escalation",
+     "polarity": "positive",
+     "centroid_xy": [
+      0.6055,
+      0.7773
+     ],
+     "anchors": [
+      {
+       "phrase": "retried the failed transfer multiple times",
+       "xy": [
+        0.7029,
+        0.4204
+       ]
+      },
+      {
+       "phrase": "froze the card after a disputed charge",
+       "xy": [
+        0.629,
+        0.94
+       ]
+      },
+      {
+       "phrase": "typed a complaint mentioning the ombudsman",
+       "xy": [
+        0.3836,
+        0.66
+       ]
+      },
+      {
+       "phrase": "demanded to speak to a manager",
+       "xy": [
+        0.4688,
+        0.7537
+       ]
+      },
+      {
+       "phrase": "threatened to close the account over the dispute",
+       "xy": [
+        0.495,
+        0.8087
+       ]
+      },
+      {
+       "phrase": "repeated failed payment attempts causing frustration",
+       "xy": [
+        0.7227,
+        0.6353
+       ]
+      },
+      {
+       "phrase": "angry message about money being stuck",
+       "xy": [
+        0.6781,
+        0.69
+       ]
+      },
+      {
+       "phrase": "disputed charge still unresolved and escalating",
+       "xy": [
+        0.5718,
+        0.7833
+       ]
+      }
      ]
     },
     {
-     "phrase": "complaining about poor network quality and dropped calls",
-     "xy": [
-      0.5756,
-      0.5855
+     "id": "case_engagement",
+     "label": "Case Engagement",
+     "short": "Engagement",
+     "polarity": "neutral",
+     "centroid_xy": [
+      0.3749,
+      0.458
+     ],
+     "anchors": [
+      {
+       "phrase": "checked the dispute status in the app",
+       "xy": [
+        0.6333,
+        0.5778
+       ]
+      },
+      {
+       "phrase": "read the resolution FAQ",
+       "xy": [
+        0.1709,
+        0.2982
+       ]
+      },
+      {
+       "phrase": "uploaded a document for the case",
+       "xy": [
+        0.39,
+        0.5153
+       ]
+      },
+      {
+       "phrase": "reviewed recent transactions calmly",
+       "xy": [
+        0.3199,
+        0.459
+       ]
+      },
+      {
+       "phrase": "opened the support chat to ask a question",
+       "xy": [
+        0.3736,
+        0.388
+       ]
+      },
+      {
+       "phrase": "checked the account balance",
+       "xy": [
+        0.5634,
+        0.5708
+       ]
+      },
+      {
+       "phrase": "browsed help center articles",
+       "xy": [
+        0.3454,
+        0.2922
+       ]
+      },
+      {
+       "phrase": "updated contact details on the account",
+       "xy": [
+        0.3799,
+        0.5159
+       ]
+      }
      ]
     },
     {
-     "phrase": "monthly bill payment failed and is overdue",
-     "xy": [
-      0.7361,
+     "id": "resolution_confidence",
+     "label": "Resolution Confidence",
+     "short": "Resolution",
+     "polarity": "negative",
+     "centroid_xy": [
+      0.1034,
       0.3723
-     ]
-    },
-    {
-     "phrase": "comparing competitor carrier prices and offers",
-     "xy": [
-      0.5295,
-      0.8754
-     ]
-    },
-    {
-     "phrase": "requesting the account number needed to port out",
-     "xy": [
-      0.6365,
-      0.5587
-     ]
-    },
-    {
-     "phrase": "disputing unexpected charges on the bill",
-     "xy": [
-      0.8536,
-      0.5892
-     ]
-    },
-    {
-     "phrase": "downgrading to a cheaper plan tier",
-     "xy": [
-      0.7264,
-      0.6753
-     ]
-    },
-    {
-     "phrase": "reading how to cancel my contract without fees",
-     "xy": [
-      0.9245,
-      0.5807
-     ]
-    }
-   ]
-  }
- ],
- "scenarios": [
-  {
-   "id": "baseline",
-   "label": "Baseline session",
-   "button": "\u25b6 Play baseline session",
-   "description": "A fresh, coherent session: on-device plan research plus a cloud billing overage. Signals agree \u2014 high-confidence upgrade propensity.",
-   "events": [
-    {
-     "id": "b1",
-     "t_offset_ms": 400,
-     "source": "device",
-     "source_label": "ios_sdk_edge",
-     "event_type": "app_screen_dwell",
-     "age_days": 0,
-     "payload": {
-      "screen": "plan upgrade comparison \u2014 unlimited premium 5G tiers",
-      "compared": "premium unlimited vs current 20GB plan",
-      "dwell_seconds": 340
-     },
-     "serialized": "mobile app event \u2014 app screen dwell. screen: plan upgrade comparison \u2014 unlimited premium 5G tiers; compared: premium unlimited vs current 20GB plan; dwell seconds: 340",
-     "sims": {
-      "upgrade_intent": 0.8283,
-      "engagement_depth": 0.7746,
-      "churn_risk": 0.6845
-     },
-     "affinities": {
-      "upgrade_intent": 0.5488,
-      "engagement_depth": 0.3208,
-      "churn_risk": 0.1304
-     },
-     "dominant": "upgrade_intent",
-     "strength": 0.8283,
-     "xy": [
-      0.1533,
-      0.5809
      ],
-     "top_fields": [
+     "anchors": [
       {
-       "field": "screen",
-       "delta": 0.056
+       "phrase": "accepted the proposed refund timeline",
+       "xy": [
+        0.2261,
+        0.3092
+       ]
       },
       {
-       "field": "compared",
-       "delta": 0.0099
+       "phrase": "similar dispute resolved smoothly last time",
+       "xy": [
+        0.1838,
+        0.5195
+       ]
       },
       {
-       "field": "dwell_seconds",
-       "delta": -0.0105
-      }
-     ]
-    },
-    {
-     "id": "b2",
-     "t_offset_ms": 2200,
-     "source": "cloud",
-     "source_label": "billing_webhook_cloud",
-     "event_type": "billing_event",
-     "age_days": 1,
-     "payload": {
-      "type": "data cap overage \u2014 monthly allowance exceeded",
-      "overage_gb": 4.2,
-      "recommended_plan": "unlimited 5G upgrade"
-     },
-     "serialized": "cloud event \u2014 billing event. type: data cap overage \u2014 monthly allowance exceeded; overage gb: 4.2; recommended plan: unlimited 5G upgrade",
-     "sims": {
-      "upgrade_intent": 0.7536,
-      "engagement_depth": 0.7168,
-      "churn_risk": 0.7135
-     },
-     "affinities": {
-      "upgrade_intent": 0.4233,
-      "engagement_depth": 0.2932,
-      "churn_risk": 0.2835
-     },
-     "dominant": "upgrade_intent",
-     "strength": 0.7536,
-     "xy": [
-      0.5621,
-      0.478
-     ],
-     "top_fields": [
-      {
-       "field": "recommended_plan",
-       "delta": 0.0855
+       "phrase": "completed the self-serve resolution flow",
+       "xy": [
+        0.1607,
+        0.3571
+       ]
       },
       {
-       "field": "type",
-       "delta": -0.0049
+       "phrase": "thanked support after a quick fix",
+       "xy": [
+        0.1367,
+        0.2876
+       ]
       },
       {
-       "field": "overage_gb",
-       "delta": -0.0098
-      }
-     ]
-    },
-    {
-     "id": "b3",
-     "t_offset_ms": 4000,
-     "source": "device",
-     "source_label": "ios_sdk_edge",
-     "event_type": "network_probe",
-     "age_days": 0,
-     "payload": {
-      "action": "ran network speed test",
-      "result_mbps": 48,
-      "follow_up": "checked 5G coverage before choosing plan upgrade"
-     },
-     "serialized": "mobile app event \u2014 network probe. action: ran network speed test; result mbps: 48; follow up: checked 5G coverage before choosing plan upgrade",
-     "sims": {
-      "upgrade_intent": 0.7418,
-      "engagement_depth": 0.7813,
-      "churn_risk": 0.6796
-     },
-     "affinities": {
-      "upgrade_intent": 0.3311,
-      "engagement_depth": 0.4912,
-      "churn_risk": 0.1777
-     },
-     "dominant": "engagement_depth",
-     "strength": 0.7813,
-     "xy": [
-      0.2249,
-      0.5013
-     ],
-     "top_fields": [
-      {
-       "field": "follow_up",
-       "delta": 0.0363
+       "phrase": "case marked resolved with positive feedback",
+       "xy": [
+        0.111,
+        0.3429
+       ]
       },
       {
-       "field": "action",
-       "delta": 0.0039
+       "phrase": "provisional credit applied and acknowledged",
+       "xy": [
+        0.3592,
+        0.4324
+       ]
       },
       {
-       "field": "result_mbps",
-       "delta": -0.0096
-      }
-     ]
-    },
-    {
-     "id": "b4",
-     "t_offset_ms": 5800,
-     "source": "device",
-     "source_label": "ios_sdk_edge",
-     "event_type": "app_screen_dwell",
-     "age_days": 0,
-     "payload": {
-      "screen": "device upgrade eligibility checker",
-      "action": "checked trade-in value for current phone"
-     },
-     "serialized": "mobile app event \u2014 app screen dwell. screen: device upgrade eligibility checker; action: checked trade-in value for current phone",
-     "sims": {
-      "upgrade_intent": 0.7929,
-      "engagement_depth": 0.7191,
-      "churn_risk": 0.6582
-     },
-     "affinities": {
-      "upgrade_intent": 0.5753,
-      "engagement_depth": 0.2751,
-      "churn_risk": 0.1496
-     },
-     "dominant": "upgrade_intent",
-     "strength": 0.7929,
-     "xy": [
-      0.1512,
-      0.5134
-     ],
-     "top_fields": [
-      {
-       "field": "action",
-       "delta": 0.0468
+       "phrase": "customer satisfied with the resolution plan",
+       "xy": [
+        0.06,
+        0.3608
+       ]
       },
       {
-       "field": "screen",
-       "delta": 0.0404
-      }
-     ]
-    },
-    {
-     "id": "b5",
-     "t_offset_ms": 7600,
-     "source": "cloud",
-     "source_label": "segment_webhook_cloud",
-     "event_type": "web_visit",
-     "age_days": 2,
-     "payload": {
-      "url": "/plans/unlimited-premium-benefits",
-      "referrer": "google search \u2014 best unlimited 5g plan upgrade",
-      "pages_in_session": 3
-     },
-     "serialized": "cloud event \u2014 web visit. url: /plans/unlimited-premium-benefits; referrer: google search \u2014 best unlimited 5g plan upgrade; pages in session: 3",
-     "sims": {
-      "upgrade_intent": 0.7997,
-      "engagement_depth": 0.7159,
-      "churn_risk": 0.6643
-     },
-     "affinities": {
-      "upgrade_intent": 0.5914,
-      "engagement_depth": 0.2558,
-      "churn_risk": 0.1527
-     },
-     "dominant": "upgrade_intent",
-     "strength": 0.7997,
-     "xy": [
-      0.4396,
-      0.5774
-     ],
-     "top_fields": [
-      {
-       "field": "referrer",
-       "delta": 0.0422
-      },
-      {
-       "field": "url",
-       "delta": 0.0147
-      },
-      {
-       "field": "pages_in_session",
-       "delta": 0.0032
-      }
-     ]
-    },
-    {
-     "id": "b6",
-     "t_offset_ms": 9200,
-     "source": "cloud",
-     "source_label": "support_webhook_cloud",
-     "event_type": "support_ticket",
-     "age_days": 12,
-     "payload": {
-      "topic": "asked about cancellation fees when leaving",
-      "channel": "chat",
-      "resolved": "closed \u2014 no action taken"
-     },
-     "serialized": "cloud event \u2014 support ticket. topic: asked about cancellation fees when leaving; channel: chat; resolved: closed \u2014 no action taken",
-     "sims": {
-      "upgrade_intent": 0.6068,
-      "engagement_depth": 0.5969,
-      "churn_risk": 0.747
-     },
-     "affinities": {
-      "upgrade_intent": 0.1675,
-      "engagement_depth": 0.1517,
-      "churn_risk": 0.6809
-     },
-     "dominant": "churn_risk",
-     "strength": 0.747,
-     "xy": [
-      0.8889,
-      0.1796
-     ],
-     "top_fields": [
-      {
-       "field": "topic",
-       "delta": 0.0924
-      },
-      {
-       "field": "channel",
-       "delta": 0.0022
-      },
-      {
-       "field": "resolved",
-       "delta": -0.0097
+       "phrase": "no further contact needed after resolution steps",
+       "xy": [
+        0.0916,
+        0.4466
+       ]
       }
      ]
     }
-   ]
-  },
-  {
-   "id": "conflict",
-   "label": "Asynchronous conflict",
-   "button": "\u26a1 Inject conflicting signals",
-   "description": "Fresh on-device signals scream upgrade; stale cloud signals say churn (a cancel enquiry and a failed payment from last week). Time decay resolves the tie \u2014 and honestly lowers confidence.",
-   "events": [
+   ],
+   "scenarios": [
     {
-     "id": "c1",
-     "t_offset_ms": 400,
-     "source": "device",
-     "source_label": "ios_sdk_edge",
-     "event_type": "app_screen_dwell",
-     "age_days": 0,
-     "payload": {
-      "screen": "unlimited premium plan pricing",
-      "dwell_seconds": 420,
-      "local_velocity": "high"
-     },
-     "serialized": "mobile app event \u2014 app screen dwell. screen: unlimited premium plan pricing; dwell seconds: 420; local velocity: high",
-     "sims": {
-      "upgrade_intent": 0.7078,
-      "engagement_depth": 0.7312,
-      "churn_risk": 0.6138
-     },
-     "affinities": {
-      "upgrade_intent": 0.3767,
-      "engagement_depth": 0.4761,
-      "churn_risk": 0.1472
-     },
-     "dominant": "engagement_depth",
-     "strength": 0.7312,
-     "xy": [
-      0.1215,
-      0.3138
-     ],
-     "top_fields": [
+     "id": "baseline",
+     "label": "Distress cluster",
+     "button": "\u25b6 Play distress session",
+     "description": "A retry loop, a card freeze, and a chargeback land together. High-confidence escalation \u2014 route to a senior agent with the brief before the angry call happens.",
+     "events": [
       {
-       "field": "screen",
-       "delta": 0.0096
+       "id": "f_b1",
+       "t_offset_ms": 400,
+       "source": "device",
+       "source_label": "app_sdk_edge",
+       "event_type": "transfer_retry",
+       "age_days": 0,
+       "payload": {
+        "action": "retried failed transfer",
+        "attempts_today": 3,
+        "amount_usd": 1200
+       },
+       "serialized": "mobile app event \u2014 transfer retry. action: retried failed transfer; attempts today: 3; amount usd: 1200",
+       "sims": {
+        "escalation_risk": 0.685,
+        "case_engagement": 0.6449,
+        "resolution_confidence": 0.5882
+       },
+       "affinities": {
+        "escalation_risk": 0.488,
+        "case_engagement": 0.3267,
+        "resolution_confidence": 0.1853
+       },
+       "dominant": "escalation_risk",
+       "strength": 0.685,
+       "xy": [
+        0.9311,
+        0.1709
+       ],
+       "top_fields": [
+        {
+         "field": "action",
+         "delta": 0.018
+        },
+        {
+         "field": "amount_usd",
+         "delta": 0.0105
+        },
+        {
+         "field": "attempts_today",
+         "delta": 0.0013
+        }
+       ]
       },
       {
-       "field": "local_velocity",
-       "delta": 0.0015
+       "id": "f_b2",
+       "t_offset_ms": 2200,
+       "source": "device",
+       "source_label": "app_sdk_edge",
+       "event_type": "card_action",
+       "age_days": 0,
+       "payload": {
+        "action": "froze card after disputed charge",
+        "screen": "card security"
+       },
+       "serialized": "mobile app event \u2014 card action. action: froze card after disputed charge; screen: card security",
+       "sims": {
+        "escalation_risk": 0.7493,
+        "case_engagement": 0.6904,
+        "resolution_confidence": 0.6369
+       },
+       "affinities": {
+        "escalation_risk": 0.532,
+        "case_engagement": 0.2952,
+        "resolution_confidence": 0.1728
+       },
+       "dominant": "escalation_risk",
+       "strength": 0.7493,
+       "xy": [
+        0.8516,
+        0.6059
+       ],
+       "top_fields": [
+        {
+         "field": "action",
+         "delta": 0.153
+        },
+        {
+         "field": "screen",
+         "delta": -0.0092
+        }
+       ]
       },
       {
-       "field": "dwell_seconds",
-       "delta": -0.0089
+       "id": "f_b3",
+       "t_offset_ms": 4000,
+       "source": "cloud",
+       "source_label": "dispute_webhook_cloud",
+       "event_type": "dispute_webhook",
+       "age_days": 0,
+       "payload": {
+        "type": "chargeback filed",
+        "merchant": "online electronics store",
+        "amount_usd": 480
+       },
+       "serialized": "cloud event \u2014 dispute webhook. type: chargeback filed; merchant: online electronics store; amount usd: 480",
+       "sims": {
+        "escalation_risk": 0.7182,
+        "case_engagement": 0.6911,
+        "resolution_confidence": 0.6369
+       },
+       "affinities": {
+        "escalation_risk": 0.4532,
+        "case_engagement": 0.3457,
+        "resolution_confidence": 0.2011
+       },
+       "dominant": "escalation_risk",
+       "strength": 0.7182,
+       "xy": [
+        0.6635,
+        0.465
+       ],
+       "top_fields": [
+        {
+         "field": "type",
+         "delta": 0.0175
+        },
+        {
+         "field": "amount_usd",
+         "delta": 0.0058
+        },
+        {
+         "field": "merchant",
+         "delta": -0.0095
+        }
+       ]
+      },
+      {
+       "id": "f_b4",
+       "t_offset_ms": 5800,
+       "source": "device",
+       "source_label": "app_sdk_edge",
+       "event_type": "app_screen_dwell",
+       "age_days": 0,
+       "payload": {
+        "screen": "dispute status \u2014 case D-4432",
+        "views_today": 4
+       },
+       "serialized": "mobile app event \u2014 app screen dwell. screen: dispute status \u2014 case D-4432; views today: 4",
+       "sims": {
+        "escalation_risk": 0.6983,
+        "case_engagement": 0.7446,
+        "resolution_confidence": 0.6617
+       },
+       "affinities": {
+        "escalation_risk": 0.3048,
+        "case_engagement": 0.4839,
+        "resolution_confidence": 0.2113
+       },
+       "dominant": "case_engagement",
+       "strength": 0.7446,
+       "xy": [
+        0.8071,
+        0.2945
+       ],
+       "top_fields": [
+        {
+         "field": "screen",
+         "delta": 0.1116
+        },
+        {
+         "field": "views_today",
+         "delta": 0.0054
+        }
+       ]
+      },
+      {
+       "id": "f_b5",
+       "t_offset_ms": 7600,
+       "source": "cloud",
+       "source_label": "support_webhook_cloud",
+       "event_type": "support_ticket",
+       "age_days": 1,
+       "payload": {
+        "topic": "asked why the transfer keeps failing",
+        "sentiment": "frustrated",
+        "channel": "chat"
+       },
+       "serialized": "cloud event \u2014 support ticket. topic: asked why the transfer keeps failing; sentiment: frustrated; channel: chat",
+       "sims": {
+        "escalation_risk": 0.7429,
+        "case_engagement": 0.6867,
+        "resolution_confidence": 0.6039
+       },
+       "affinities": {
+        "escalation_risk": 0.5496,
+        "case_engagement": 0.3135,
+        "resolution_confidence": 0.1369
+       },
+       "dominant": "escalation_risk",
+       "strength": 0.7429,
+       "xy": [
+        0.6716,
+        0.2835
+       ],
+       "top_fields": [
+        {
+         "field": "sentiment",
+         "delta": 0.0392
+        },
+        {
+         "field": "topic",
+         "delta": 0.0139
+        },
+        {
+         "field": "channel",
+         "delta": -0.0049
+        }
+       ]
       }
      ]
     },
     {
-     "id": "c2",
-     "t_offset_ms": 2200,
-     "source": "cloud",
-     "source_label": "support_webhook_cloud",
-     "event_type": "support_ticket",
-     "age_days": 9,
-     "payload": {
-      "topic": "asked how to cancel service",
-      "sentiment": "negative",
-      "channel": "chat"
-     },
-     "serialized": "cloud event \u2014 support ticket. topic: asked how to cancel service; sentiment: negative; channel: chat",
-     "sims": {
-      "upgrade_intent": 0.6136,
-      "engagement_depth": 0.6401,
-      "churn_risk": 0.787
-     },
-     "affinities": {
-      "upgrade_intent": 0.1255,
-      "engagement_depth": 0.1636,
-      "churn_risk": 0.7109
-     },
-     "dominant": "churn_risk",
-     "strength": 0.787,
-     "xy": [
-      0.9239,
-      0.1443
-     ],
-     "top_fields": [
+     "id": "conflict",
+     "label": "History says patient, behavior says not",
+     "button": "\u26a1 Inject conflicting signals",
+     "description": "The record says this customer resolves things amicably \u2014 refund accepted, 9/10 CSAT. Their live behavior says otherwise. Decay sides with today; automation holds while sources disagree.",
+     "events": [
       {
-       "field": "topic",
-       "delta": 0.0884
+       "id": "f_c1",
+       "t_offset_ms": 400,
+       "source": "device",
+       "source_label": "app_sdk_edge",
+       "event_type": "transfer_retry",
+       "age_days": 0,
+       "payload": {
+        "action": "retried failed transfer",
+        "attempts_today": 2
+       },
+       "serialized": "mobile app event \u2014 transfer retry. action: retried failed transfer; attempts today: 2",
+       "sims": {
+        "escalation_risk": 0.6701,
+        "case_engagement": 0.6398,
+        "resolution_confidence": 0.58
+       },
+       "affinities": {
+        "escalation_risk": 0.4663,
+        "case_engagement": 0.3443,
+        "resolution_confidence": 0.1893
+       },
+       "dominant": "escalation_risk",
+       "strength": 0.6701,
+       "xy": [
+        0.94,
+        0.1421
+       ],
+       "top_fields": [
+        {
+         "field": "action",
+         "delta": 0.0184
+        },
+        {
+         "field": "attempts_today",
+         "delta": -0.0008
+        }
+       ]
       },
       {
-       "field": "sentiment",
-       "delta": 0.0211
+       "id": "f_c2",
+       "t_offset_ms": 2200,
+       "source": "cloud",
+       "source_label": "case_history_cloud",
+       "event_type": "case_history",
+       "age_days": 11,
+       "payload": {
+        "type": "previous dispute resolved amicably",
+        "outcome": "refund accepted, positive feedback"
+       },
+       "serialized": "cloud event \u2014 case history. type: previous dispute resolved amicably; outcome: refund accepted, positive feedback",
+       "sims": {
+        "escalation_risk": 0.6903,
+        "case_engagement": 0.7207,
+        "resolution_confidence": 0.8182
+       },
+       "affinities": {
+        "escalation_risk": 0.168,
+        "case_engagement": 0.2279,
+        "resolution_confidence": 0.6041
+       },
+       "dominant": "resolution_confidence",
+       "strength": 0.8182,
+       "xy": [
+        0.3035,
+        0.2722
+       ],
+       "top_fields": [
+        {
+         "field": "type",
+         "delta": 0.0487
+        },
+        {
+         "field": "outcome",
+         "delta": 0.0428
+        }
+       ]
       },
       {
-       "field": "channel",
-       "delta": -0.0021
+       "id": "f_c3",
+       "t_offset_ms": 4000,
+       "source": "device",
+       "source_label": "app_sdk_edge",
+       "event_type": "card_action",
+       "age_days": 0,
+       "payload": {
+        "action": "froze card after disputed charge"
+       },
+       "serialized": "mobile app event \u2014 card action. action: froze card after disputed charge",
+       "sims": {
+        "escalation_risk": 0.7585,
+        "case_engagement": 0.6756,
+        "resolution_confidence": 0.6332
+       },
+       "affinities": {
+        "escalation_risk": 0.5805,
+        "case_engagement": 0.2536,
+        "resolution_confidence": 0.1659
+       },
+       "dominant": "escalation_risk",
+       "strength": 0.7585,
+       "xy": [
+        0.8551,
+        0.6265
+       ],
+       "top_fields": [
+        {
+         "field": "action",
+         "delta": 0.1754
+        }
+       ]
+      },
+      {
+       "id": "f_c4",
+       "t_offset_ms": 5800,
+       "source": "cloud",
+       "source_label": "case_history_cloud",
+       "event_type": "case_history",
+       "age_days": 9,
+       "payload": {
+        "type": "refund timeline accepted",
+        "note": "customer thanked support for the quick fix"
+       },
+       "serialized": "cloud event \u2014 case history. type: refund timeline accepted; note: customer thanked support for the quick fix",
+       "sims": {
+        "escalation_risk": 0.6757,
+        "case_engagement": 0.7286,
+        "resolution_confidence": 0.8367
+       },
+       "affinities": {
+        "escalation_risk": 0.1298,
+        "case_engagement": 0.2205,
+        "resolution_confidence": 0.6497
+       },
+       "dominant": "resolution_confidence",
+       "strength": 0.8367,
+       "xy": [
+        0.2859,
+        0.1711
+       ],
+       "top_fields": [
+        {
+         "field": "note",
+         "delta": 0.0904
+        },
+        {
+         "field": "type",
+         "delta": 0.0385
+        }
+       ]
+      },
+      {
+       "id": "f_c5",
+       "t_offset_ms": 7600,
+       "source": "device",
+       "source_label": "app_sdk_edge",
+       "event_type": "app_screen_dwell",
+       "age_days": 0,
+       "payload": {
+        "screen": "dispute status \u2014 checked twice this hour"
+       },
+       "serialized": "mobile app event \u2014 app screen dwell. screen: dispute status \u2014 checked twice this hour",
+       "sims": {
+        "escalation_risk": 0.7199,
+        "case_engagement": 0.7466,
+        "resolution_confidence": 0.6605
+       },
+       "affinities": {
+        "escalation_risk": 0.35,
+        "case_engagement": 0.4568,
+        "resolution_confidence": 0.1932
+       },
+       "dominant": "case_engagement",
+       "strength": 0.7466,
+       "xy": [
+        0.8569,
+        0.3103
+       ],
+       "top_fields": [
+        {
+         "field": "screen",
+         "delta": 0.1279
+        }
+       ]
+      },
+      {
+       "id": "f_c6",
+       "t_offset_ms": 9400,
+       "source": "cloud",
+       "source_label": "survey_webhook_cloud",
+       "event_type": "survey_event",
+       "age_days": 12,
+       "payload": {
+        "type": "csat submitted",
+        "score": "9 of 10",
+        "note": "smooth resolution last time"
+       },
+       "serialized": "cloud event \u2014 survey event. type: csat submitted; score: 9 of 10; note: smooth resolution last time",
+       "sims": {
+        "escalation_risk": 0.5829,
+        "case_engagement": 0.6763,
+        "resolution_confidence": 0.715
+       },
+       "affinities": {
+        "escalation_risk": 0.1372,
+        "case_engagement": 0.3489,
+        "resolution_confidence": 0.5139
+       },
+       "dominant": "resolution_confidence",
+       "strength": 0.715,
+       "xy": [
+        0.3489,
+        0.0601
+       ],
+       "top_fields": [
+        {
+         "field": "note",
+         "delta": 0.0973
+        },
+        {
+         "field": "type",
+         "delta": 0.0033
+        },
+        {
+         "field": "score",
+         "delta": -0.0049
+        }
+       ]
       }
      ]
     },
     {
-     "id": "c3",
-     "t_offset_ms": 4000,
-     "source": "device",
-     "source_label": "ios_sdk_edge",
-     "event_type": "cart_event",
-     "age_days": 0,
-     "payload": {
-      "action": "added premium data add-on to cart",
-      "value_usd": 25
-     },
-     "serialized": "mobile app event \u2014 cart event. action: added premium data add-on to cart; value usd: 25",
-     "sims": {
-      "upgrade_intent": 0.7194,
-      "engagement_depth": 0.6978,
-      "churn_risk": 0.6237
-     },
-     "affinities": {
-      "upgrade_intent": 0.4567,
-      "engagement_depth": 0.368,
-      "churn_risk": 0.1753
-     },
-     "dominant": "upgrade_intent",
-     "strength": 0.7194,
-     "xy": [
-      0.2925,
-      0.3245
-     ],
-     "top_fields": [
+     "id": "sparse",
+     "label": "Sparse / quiet case",
+     "button": "\ud83d\uded1 Feed sparse, quiet signals",
+     "description": "Case open, merchant hasn't responded, customer barely active. No basis to jump the queue in either direction \u2014 standard track.",
+     "events": [
       {
-       "field": "action",
-       "delta": 0.074
+       "id": "f_s1",
+       "t_offset_ms": 400,
+       "source": "device",
+       "source_label": "app_sdk_edge",
+       "event_type": "app_open",
+       "age_days": 4,
+       "payload": {
+        "screen": "home",
+        "dwell_seconds": 10
+       },
+       "serialized": "mobile app event \u2014 app open. screen: home; dwell seconds: 10",
+       "sims": {
+        "escalation_risk": 0.5489,
+        "case_engagement": 0.6205,
+        "resolution_confidence": 0.5555
+       },
+       "affinities": {
+        "escalation_risk": 0.2429,
+        "case_engagement": 0.4973,
+        "resolution_confidence": 0.2597
+       },
+       "dominant": "case_engagement",
+       "strength": 0.6205,
+       "xy": [
+        0.8601,
+        0.06
+       ],
+       "top_fields": [
+        {
+         "field": "screen",
+         "delta": -0.0029
+        },
+        {
+         "field": "dwell_seconds",
+         "delta": -0.0147
+        }
+       ]
       },
       {
-       "field": "value_usd",
-       "delta": -0.0032
-      }
-     ]
-    },
-    {
-     "id": "c4",
-     "t_offset_ms": 5800,
-     "source": "cloud",
-     "source_label": "billing_webhook_cloud",
-     "event_type": "billing_event",
-     "age_days": 6,
-     "payload": {
-      "type": "payment failed",
-      "amount_usd": 68.5,
-      "retry": "pending"
-     },
-     "serialized": "cloud event \u2014 billing event. type: payment failed; amount usd: 68.5; retry: pending",
-     "sims": {
-      "upgrade_intent": 0.6105,
-      "engagement_depth": 0.5974,
-      "churn_risk": 0.6948
-     },
-     "affinities": {
-      "upgrade_intent": 0.2381,
-      "engagement_depth": 0.2089,
-      "churn_risk": 0.553
-     },
-     "dominant": "churn_risk",
-     "strength": 0.6948,
-     "xy": [
-      0.7115,
-      0.176
-     ],
-     "top_fields": [
-      {
-       "field": "type",
-       "delta": 0.016
+       "id": "f_s2",
+       "t_offset_ms": 2200,
+       "source": "cloud",
+       "source_label": "dispute_webhook_cloud",
+       "event_type": "dispute_webhook",
+       "age_days": 8,
+       "payload": {
+        "type": "case opened",
+        "status": "awaiting merchant response"
+       },
+       "serialized": "cloud event \u2014 dispute webhook. type: case opened; status: awaiting merchant response",
+       "sims": {
+        "escalation_risk": 0.7235,
+        "case_engagement": 0.7229,
+        "resolution_confidence": 0.675
+       },
+       "affinities": {
+        "escalation_risk": 0.3833,
+        "case_engagement": 0.3808,
+        "resolution_confidence": 0.2358
+       },
+       "dominant": "escalation_risk",
+       "strength": 0.7235,
+       "xy": [
+        0.6164,
+        0.405
+       ],
+       "top_fields": [
+        {
+         "field": "status",
+         "delta": 0.0174
+        },
+        {
+         "field": "type",
+         "delta": 0.0027
+        }
+       ]
       },
       {
-       "field": "amount_usd",
-       "delta": 0.0034
+       "id": "f_s3",
+       "t_offset_ms": 4000,
+       "source": "device",
+       "source_label": "app_sdk_edge",
+       "event_type": "app_screen_dwell",
+       "age_days": 6,
+       "payload": {
+        "screen": "transaction list",
+        "dwell_seconds": 22
+       },
+       "serialized": "mobile app event \u2014 app screen dwell. screen: transaction list; dwell seconds: 22",
+       "sims": {
+        "escalation_risk": 0.5972,
+        "case_engagement": 0.6545,
+        "resolution_confidence": 0.5727
+       },
+       "affinities": {
+        "escalation_risk": 0.2813,
+        "case_engagement": 0.4987,
+        "resolution_confidence": 0.22
+       },
+       "dominant": "case_engagement",
+       "strength": 0.6545,
+       "xy": [
+        0.8976,
+        0.1104
+       ],
+       "top_fields": [
+        {
+         "field": "screen",
+         "delta": 0.0467
+        },
+        {
+         "field": "dwell_seconds",
+         "delta": -0.0298
+        }
+       ]
       },
       {
-       "field": "retry",
-       "delta": -0.0043
-      }
-     ]
-    },
-    {
-     "id": "c5",
-     "t_offset_ms": 7600,
-     "source": "device",
-     "source_label": "ios_sdk_edge",
-     "event_type": "app_screen_dwell",
-     "age_days": 0,
-     "payload": {
-      "screen": "checkout \u2014 plan upgrade review order",
-      "step": "review order"
-     },
-     "serialized": "mobile app event \u2014 app screen dwell. screen: checkout \u2014 plan upgrade review order; step: review order",
-     "sims": {
-      "upgrade_intent": 0.7712,
-      "engagement_depth": 0.7218,
-      "churn_risk": 0.6695
-     },
-     "affinities": {
-      "upgrade_intent": 0.5072,
-      "engagement_depth": 0.3094,
-      "churn_risk": 0.1834
-     },
-     "dominant": "upgrade_intent",
-     "strength": 0.7712,
-     "xy": [
-      0.2316,
-      0.387
-     ],
-     "top_fields": [
-      {
-       "field": "screen",
-       "delta": 0.1003
-      },
-      {
-       "field": "step",
-       "delta": -0.0182
-      }
-     ]
-    },
-    {
-     "id": "c6",
-     "t_offset_ms": 9400,
-     "source": "cloud",
-     "source_label": "segment_webhook_cloud",
-     "event_type": "web_visit",
-     "age_days": 9,
-     "payload": {
-      "url": "/support/how-to-cancel",
-      "referrer": "direct"
-     },
-     "serialized": "cloud event \u2014 web visit. url: /support/how-to-cancel; referrer: direct",
-     "sims": {
-      "upgrade_intent": 0.5851,
-      "engagement_depth": 0.6336,
-      "churn_risk": 0.6849
-     },
-     "affinities": {
-      "upgrade_intent": 0.1874,
-      "engagement_depth": 0.3044,
-      "churn_risk": 0.5082
-     },
-     "dominant": "churn_risk",
-     "strength": 0.6849,
-     "xy": [
-      0.7866,
-      0.06
-     ],
-     "top_fields": [
-      {
-       "field": "url",
-       "delta": 0.0829
-      },
-      {
-       "field": "referrer",
-       "delta": 0.0214
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "id": "sparse",
-   "label": "Sparse / drifting signals",
-   "button": "\ud83d\uded1 Feed sparse, drifting signals",
-   "description": "Weak, stale, contradictory signals. The honest answer is \"we don't know\" \u2014 confidence falls below the 70% floor and the system refuses to emit a segment. Guardrails over guesses.",
-   "events": [
-    {
-     "id": "s1",
-     "t_offset_ms": 400,
-     "source": "device",
-     "source_label": "ios_sdk_edge",
-     "event_type": "app_open",
-     "age_days": 4,
-     "payload": {
-      "screen": "home dashboard",
-      "dwell_seconds": 12
-     },
-     "serialized": "mobile app event \u2014 app open. screen: home dashboard; dwell seconds: 12",
-     "sims": {
-      "upgrade_intent": 0.5936,
-      "engagement_depth": 0.7293,
-      "churn_risk": 0.5638
-     },
-     "affinities": {
-      "upgrade_intent": 0.1777,
-      "engagement_depth": 0.6904,
-      "churn_risk": 0.1319
-     },
-     "dominant": "engagement_depth",
-     "strength": 0.7293,
-     "xy": [
-      0.0716,
-      0.0814
-     ],
-     "top_fields": [
-      {
-       "field": "screen",
-       "delta": 0.0105
-      },
-      {
-       "field": "dwell_seconds",
-       "delta": -0.0183
-      }
-     ]
-    },
-    {
-     "id": "s2",
-     "t_offset_ms": 2200,
-     "source": "cloud",
-     "source_label": "segment_webhook_cloud",
-     "event_type": "web_visit",
-     "age_days": 11,
-     "payload": {
-      "url": "/support/articles/roaming-charges",
-      "referrer": "email"
-     },
-     "serialized": "cloud event \u2014 web visit. url: /support/articles/roaming-charges; referrer: email",
-     "sims": {
-      "upgrade_intent": 0.6742,
-      "engagement_depth": 0.7056,
-      "churn_risk": 0.6974
-     },
-     "affinities": {
-      "upgrade_intent": 0.2755,
-      "engagement_depth": 0.3772,
-      "churn_risk": 0.3474
-     },
-     "dominant": "engagement_depth",
-     "strength": 0.7056,
-     "xy": [
-      0.6391,
-      0.252
-     ],
-     "top_fields": [
-      {
-       "field": "url",
-       "delta": 0.0627
-      },
-      {
-       "field": "referrer",
-       "delta": 0.0012
-      }
-     ]
-    },
-    {
-     "id": "s3",
-     "t_offset_ms": 4000,
-     "source": "device",
-     "source_label": "ios_sdk_edge",
-     "event_type": "app_screen_dwell",
-     "age_days": 7,
-     "payload": {
-      "screen": "bill summary",
-      "dwell_seconds": 25
-     },
-     "serialized": "mobile app event \u2014 app screen dwell. screen: bill summary; dwell seconds: 25",
-     "sims": {
-      "upgrade_intent": 0.6694,
-      "engagement_depth": 0.7538,
-      "churn_risk": 0.6591
-     },
-     "affinities": {
-      "upgrade_intent": 0.2366,
-      "engagement_depth": 0.5501,
-      "churn_risk": 0.2133
-     },
-     "dominant": "engagement_depth",
-     "strength": 0.7538,
-     "xy": [
-      0.1686,
-      0.1668
-     ],
-     "top_fields": [
-      {
-       "field": "screen",
-       "delta": 0.0397
-      },
-      {
-       "field": "dwell_seconds",
-       "delta": 0.0019
-      }
-     ]
-    },
-    {
-     "id": "s4",
-     "t_offset_ms": 5800,
-     "source": "cloud",
-     "source_label": "marketing_webhook_cloud",
-     "event_type": "marketing_event",
-     "age_days": 13,
-     "payload": {
-      "type": "email opened",
-      "campaign": "competitor price match offer"
-     },
-     "serialized": "cloud event \u2014 marketing event. type: email opened; campaign: competitor price match offer",
-     "sims": {
-      "upgrade_intent": 0.6472,
-      "engagement_depth": 0.6331,
-      "churn_risk": 0.6622
-     },
-     "affinities": {
-      "upgrade_intent": 0.3301,
-      "engagement_depth": 0.2866,
-      "churn_risk": 0.3833
-     },
-     "dominant": "churn_risk",
-     "strength": 0.6622,
-     "xy": [
-      0.5768,
-      0.2643
-     ],
-     "top_fields": [
-      {
-       "field": "campaign",
-       "delta": 0.0477
-      },
-      {
-       "field": "type",
-       "delta": 0.0092
-      }
-     ]
-    },
-    {
-     "id": "s5",
-     "t_offset_ms": 7600,
-     "source": "device",
-     "source_label": "ios_sdk_edge",
-     "event_type": "app_open",
-     "age_days": 5,
-     "payload": {
-      "screen": "coverage map",
-      "dwell_seconds": 18
-     },
-     "serialized": "mobile app event \u2014 app open. screen: coverage map; dwell seconds: 18",
-     "sims": {
-      "upgrade_intent": 0.6403,
-      "engagement_depth": 0.7791,
-      "churn_risk": 0.6061
-     },
-     "affinities": {
-      "upgrade_intent": 0.1748,
-      "engagement_depth": 0.7009,
-      "churn_risk": 0.1243
-     },
-     "dominant": "engagement_depth",
-     "strength": 0.7791,
-     "xy": [
-      0.06,
-      0.1934
-     ],
-     "top_fields": [
-      {
-       "field": "screen",
-       "delta": 0.0493
-      },
-      {
-       "field": "dwell_seconds",
-       "delta": -0.0051
+       "id": "f_s4",
+       "t_offset_ms": 5800,
+       "source": "cloud",
+       "source_label": "marketing_webhook_cloud",
+       "event_type": "marketing_event",
+       "age_days": 10,
+       "payload": {
+        "type": "email opened",
+        "campaign": "savings account offer"
+       },
+       "serialized": "cloud event \u2014 marketing event. type: email opened; campaign: savings account offer",
+       "sims": {
+        "escalation_risk": 0.6018,
+        "case_engagement": 0.6639,
+        "resolution_confidence": 0.6081
+       },
+       "affinities": {
+        "escalation_risk": 0.2547,
+        "case_engagement": 0.4741,
+        "resolution_confidence": 0.2712
+       },
+       "dominant": "case_engagement",
+       "strength": 0.6639,
+       "xy": [
+        0.5989,
+        0.1862
+       ],
+       "top_fields": [
+        {
+         "field": "type",
+         "delta": 0.0592
+        },
+        {
+         "field": "campaign",
+         "delta": -0.0026
+        }
+       ]
       }
      ]
     }

@@ -1,25 +1,81 @@
-"""Authored signal scripts for the three demo scenarios.
+"""Telco vertical — upgrade propensity vs churn (the original ContextLens domain).
 
-Every event is a raw telemetry payload for one mock subscriber. The payloads
-are authored (this is a simulation), but everything computed FROM them —
-embeddings, axis affinities, field ablations, projections — is real math.
-
-Event fields:
-  id           stable identifier, referenced by the UI
-  t_offset_ms  playback timing inside the scenario feed
-  source       "device" (on-device SDK) | "cloud" (server-side webhook)
-  source_label the system name shown in the raw JSON feed
-  event_type   telemetry event name
-  age_days     how stale the signal is; drives exponential time decay
-  payload      the raw fields; each field is independently ablatable
+Content is byte-identical to the pre-refactor anchors.py/scenarios.py so the
+calibrated story shapes reproduce.
 """
 
-SUBSCRIBER = {
-    "user_id": "sub_88231",
-    "plan": "Mid 20GB / mo",
-    "tenure_months": 26,
-    "region": "urban-5g",
+ID = "telco"
+LABEL = "Telco"
+DESCRIPTION = "Subscriber upgrade propensity vs churn — marketing activation"
+
+ENTITY = {
+    "id": "sub_88231",
+    "summary": "Mid 20GB / mo · tenure 26mo · urban-5g",
 }
+
+SEGMENTS = {
+    "positive": "High-Value Upgrade Propensity (Unlimited 5G)",
+    "negative": "Churn Risk — Retention Route",
+    "indeterminate": "Indeterminate — General Baseline",
+}
+
+ATTR_SCALE = {"left": "churn evidence", "right": "upgrade evidence"}
+
+PARAMS_OVERRIDES = {}
+
+_POLARITY = {"upgrade_intent": "positive", "engagement_depth": "neutral", "churn_risk": "negative"}
+
+AXES = [
+    {
+        "id": "upgrade_intent",
+        "label": "Upgrade Intent",
+        "short": "Intent",
+        "phrases": [
+            "comparing unlimited premium plan tiers and pricing",
+            "checking device upgrade eligibility in the account app",
+            "viewing 5G unlimited plan pricing page",
+            "estimating the monthly cost of upgrading my plan",
+            "browsing new phone deals and trade-in offers",
+            "adding a premium data add-on to the cart",
+            "checking trade-in value for my current phone",
+            "reading about unlimited plan benefits and perks",
+            "reviewing a plan upgrade order at checkout",
+        ],
+    },
+    {
+        "id": "engagement_depth",
+        "label": "Engagement Depth",
+        "short": "Engagement",
+        "phrases": [
+            "long focused session inside the carrier account app",
+            "opening the mobile app every day this week",
+            "running a network speed test from the app",
+            "exploring the 5G coverage map in detail",
+            "reading support documentation thoroughly",
+            "reviewing data usage on the account dashboard",
+            "configuring account settings and preferences",
+            "heavy mobile data usage streaming video",
+        ],
+    },
+    {
+        "id": "churn_risk",
+        "label": "Churn Risk",
+        "short": "Churn",
+        "phrases": [
+            "contacting support asking how to cancel service",
+            "complaining about poor network quality and dropped calls",
+            "monthly bill payment failed and is overdue",
+            "comparing competitor carrier prices and offers",
+            "requesting the account number needed to port out",
+            "disputing unexpected charges on the bill",
+            "downgrading to a cheaper plan tier",
+            "reading how to cancel my contract without fees",
+        ],
+    },
+]
+
+for _ax in AXES:
+    _ax["polarity"] = _POLARITY[_ax["id"]]
 
 SCENARIOS = [
     {
@@ -273,19 +329,3 @@ SCENARIOS = [
     },
 ]
 
-
-def serialize_event(event, drop_field=None):
-    """Turn a raw event into the text that gets embedded.
-
-    One compact natural-language line: event type plus every payload field.
-    `drop_field` omits a single payload field — used for leave-one-out
-    ablation, so each field's contribution to the semantic score is the
-    cosine delta caused by removing it.
-    """
-    parts = []
-    for key, value in event["payload"].items():
-        if key == drop_field:
-            continue
-        parts.append(f"{key.replace('_', ' ')}: {value}")
-    kind = "mobile app event" if event["source"] == "device" else "cloud event"
-    return f"{kind} — {event['event_type'].replace('_', ' ')}. " + "; ".join(parts)

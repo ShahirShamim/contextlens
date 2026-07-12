@@ -27,8 +27,8 @@ import {
   statusOf,
   type Aggregate,
   type Epsilon,
-  type Model,
   type Params,
+  type Vertical,
 } from "@/lib/model";
 
 const badgeClass: Record<string, string> = {
@@ -51,7 +51,7 @@ export function AttrPanel({
   P,
   epsilon,
   privacyCost,
-  subscriber,
+  vertical,
   initialCallOpen,
 }: {
   agg: Aggregate | null;
@@ -60,15 +60,17 @@ export function AttrPanel({
   P: Params;
   epsilon: Epsilon;
   privacyCost: number;
-  subscriber: Model["subscriber"];
+  vertical: Vertical;
   initialCallOpen: boolean;
 }) {
   const [callOpen, setCallOpen] = useState(initialCallOpen);
   const rows = agg ? [...agg.rows].sort((a, b) => b.share - a.share) : [];
   const maxShare = rows[0]?.share || 1;
   const st = agg ? statusOf(agg, P) : null;
-  const agent = agg ? agentDecision(agg, P) : null;
-  const play = agg ? agentPlay(agg) : null;
+  const agent = agg ? agentDecision(agg, vertical) : null;
+  const play = agg ? agentPlay(agg, vertical) : null;
+  const posShort = vertical.axes.find((a) => a.polarity === "positive")!.short;
+  const negShort = vertical.axes.find((a) => a.polarity === "negative")!.short;
 
   return (
     <Card className="min-w-0">
@@ -95,7 +97,7 @@ export function AttrPanel({
               Predicted segment
             </div>
             <div className="mt-1 text-base font-semibold leading-snug">
-              {agg ? segmentOf(agg) : "—"}
+              {agg ? segmentOf(agg, vertical) : "—"}
             </div>
             {st ? (
               <Badge
@@ -160,9 +162,9 @@ export function AttrPanel({
             </SheetHeader>
             <div className="flex flex-col gap-4 px-4 pb-6">
               <div className="rounded-lg border bg-muted/40 p-3 font-mono text-xs">
-                <b className="text-foreground">{subscriber.user_id}</b>
+                <b className="text-foreground">{vertical.entity.id}</b>
                 <span className="text-muted-foreground">
-                  {" "}· {subscriber.plan} · tenure {subscriber.tenure_months}mo · calling now
+                  {" "}· {vertical.entity.summary} · calling now
                 </span>
               </div>
 
@@ -222,8 +224,8 @@ export function AttrPanel({
           <div className="flex flex-wrap items-baseline justify-between gap-2 text-[10px] uppercase tracking-wider text-muted-foreground">
             <span>Attribution breakdown</span>
             <span className="normal-case tracking-normal">
-              <span className="text-viz-neg">← churn evidence</span> ·{" "}
-              <span className="text-viz-device">upgrade evidence →</span>
+              <span className="text-viz-neg">← {vertical.attr_scale.left}</span> ·{" "}
+              <span className="text-viz-device">{vertical.attr_scale.right} →</span>
             </span>
           </div>
           {rows.length === 0 ? (
@@ -269,7 +271,7 @@ export function AttrPanel({
                   {decayOn
                     ? `wᵢ = trust(src)·e^(−λ·ageᵢ)      λ=${P.lambda_decay_per_day}/day · trust device=${P.source_trust.device.toFixed(2)}, cloud=${P.source_trust.cloud.toFixed(2)}`
                     : `wᵢ = trust(src)      ⚠ COUNTERFACTUAL: λ forced to 0, stale signals at full weight`}
-                  {`\nvᵢ = affinity(upgrade) − affinity(churn)`}
+                  {`\nvᵢ = affinity(${posShort}) − affinity(${negShort})`}
                   {`\nnet = Σwᵢvᵢ / Σwᵢ = ${agg.net >= 0 ? "+" : ""}${agg.net.toFixed(3)}`}
                   {`\nconfidence = σ(k·|net|) = ${agg.confidence.toFixed(1)}%      k=${Number(P.sigmoid_k.toFixed(2))}${epsilon !== null ? " (discounted for ε noise variance)" : ""}`}
                   {`\ndrift = weightedStd(vᵢ)/${P.drift_scale} = ${agg.drift.toFixed(2)}      mute > ${P.drift_limit} · suppress < ${P.confidence_floor_pct}% conf`}
@@ -281,9 +283,11 @@ export function AttrPanel({
                       <TableHead>src</TableHead>
                       <TableHead className="text-right">age</TableHead>
                       <TableHead className="text-right">wᵢ</TableHead>
-                      <TableHead className="text-right">U</TableHead>
-                      <TableHead className="text-right">E</TableHead>
-                      <TableHead className="text-right">C</TableHead>
+                      {vertical.axes.map((ax) => (
+                        <TableHead key={ax.id} className="text-right" title={ax.label}>
+                          {ax.short.slice(0, 4)}
+                        </TableHead>
+                      ))}
                       <TableHead className="text-right">vᵢ</TableHead>
                       <TableHead className="text-right">wᵢvᵢ</TableHead>
                       <TableHead className="text-right">share</TableHead>
@@ -296,9 +300,11 @@ export function AttrPanel({
                         <TableCell>{r.ev.source}</TableCell>
                         <TableCell className="text-right">{r.ev.age_days}d</TableCell>
                         <TableCell className="text-right">{r.w.toFixed(2)}</TableCell>
-                        <TableCell className="text-right">{r.ev.affinities.upgrade_intent.toFixed(2)}</TableCell>
-                        <TableCell className="text-right">{r.ev.affinities.engagement_depth.toFixed(2)}</TableCell>
-                        <TableCell className="text-right">{r.ev.affinities.churn_risk.toFixed(2)}</TableCell>
+                        {vertical.axes.map((ax) => (
+                          <TableCell key={ax.id} className="text-right">
+                            {r.ev.affinities[ax.id].toFixed(2)}
+                          </TableCell>
+                        ))}
                         <TableCell className="text-right">{r.v >= 0 ? "+" : ""}{r.v.toFixed(2)}</TableCell>
                         <TableCell className="text-right">{r.wv >= 0 ? "+" : ""}{r.wv.toFixed(2)}</TableCell>
                         <TableCell className="text-right">{(r.share * 100).toFixed(0)}%</TableCell>

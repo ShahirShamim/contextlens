@@ -1,13 +1,27 @@
 # ContextLens
 
-**Explainable intent resolution — from raw fragmented signals to an auditable score.**
+**Explainable intent resolution — one engine, three industries.**
 
 A working, interactive demo of how behavioral prediction can be made *legible*: raw
-telemetry for one mock telco subscriber streams in from two fragmented sources (an
+telemetry streams in from two fragmented sources (an
 on-device SDK and cloud webhooks), maps into a shared semantic embedding space, and
 resolves into a propensity score where **every percentage point is traceable to a
 signal** — or, when the evidence doesn't support a prediction, into an explicit,
 guardrailed refusal to predict.
+
+The engine is vertical-agnostic — each industry declares its own axes, polarity,
+segments and labels as data, and the same scoring math drives all three:
+
+| Tab | Prediction | Action consumer |
+|---|---|---|
+| **Telco** (`?vertical=telco`) | Upgrade propensity vs churn | Marketing activation |
+| **Marketplace** (`?vertical=marketplace`) | WISMO risk vs delivery confidence — "buyer about to ask *where is my order?*" | Proactive logistics outreach, before the ticket exists |
+| **Fintech** (`?vertical=fintech`) | Case escalation risk vs self-serve resolution | Support routing — senior agent vs automated flow |
+
+Each vertical ships the full ladder: three calibrated scenarios (clean / conflict /
+sparse), preset signals, live scoring, tour captions, and agent plays. Even the
+decay half-life is per-domain: delivery context decays at λ=0.45/day, telco intent
+at λ=0.13/day — staleness is a product decision, not a constant.
 
 **Live demo:** https://contextlens.hireme.jmkn.tech
 (deep links: [`?play=baseline`](https://contextlens.hireme.jmkn.tech/?play=baseline) ·
@@ -30,7 +44,7 @@ intent-analytics platforms such as Intent HQ describe publicly (privacy-first
 on-device signals fused with cloud event streams). It is not affiliated with or
 endorsed by any company.
 
-## The three scenarios
+## The three scenarios (telco shown; every vertical has the same ladder)
 
 | Scenario | What happens | What it demonstrates |
 |---|---|---|
