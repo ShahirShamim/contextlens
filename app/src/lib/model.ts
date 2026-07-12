@@ -280,7 +280,8 @@ export const CAPTIONS: Record<string, [number, string][]> = {
     [500, "Two sources stream in for one subscriber: on-device SDK events (blue) and cloud webhooks (orange)."],
     [2600, "Device payloads are scored on the phone — only a 3-number vector crosses to the cloud. 🔒"],
     [5200, "Every signal lands in the semantic space and the attribution recomposes — hover any dot or bar."],
-    [8600, "Fresh, coherent evidence → high confidence. All three guardrails green: cleared for activation."],
+    [9600, "Even a stale churn whisper shows up — decayed to a small red counterweight, visible, never hidden."],
+    [13400, "Fresh, coherent evidence → high confidence. All three guardrails green: cleared for activation."],
   ],
   conflict: [
     [600, "Fresh device signals show intense upgrade intent…"],

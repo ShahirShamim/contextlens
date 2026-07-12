@@ -96,13 +96,11 @@ export default function App() {
     if (!model) return;
     const deepLink = params.get("play");
     const auto = model.scenarios.some((s) => s.id === deepLink) ? deepLink : null;
-    const seen = localStorage.getItem("contextlens_seen") || auto;
-    if (!seen) {
-      setIntroOpen(true);
-    } else {
-      const t = window.setTimeout(() => play(auto || "baseline", model, tourOn), 400);
-      return () => clearTimeout(t);
-    }
+    // Always start playing — first-time visitors get the intro dialog on top
+    // of a session that is already alive behind it.
+    if (!localStorage.getItem("contextlens_seen") && !auto) setIntroOpen(true);
+    const t = window.setTimeout(() => play(auto || "baseline", model, tourOn), 400);
+    return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [model]);
 
@@ -321,7 +319,7 @@ export default function App() {
                 if (!emitted.length) play("baseline", model, tourOn);
               }}
             >
-              ▶ Play the demo
+              Got it — show me
             </Button>
           </DialogFooter>
         </DialogContent>
