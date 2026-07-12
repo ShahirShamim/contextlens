@@ -24,9 +24,10 @@ decay half-life is per-domain: delivery context decays at λ=0.45/day, telco int
 at λ=0.13/day — staleness is a product decision, not a constant.
 
 **Live demo:** https://contextlens.hireme.jmkn.tech
-(deep links: [`?play=baseline`](https://contextlens.hireme.jmkn.tech/?play=baseline) ·
-[`?play=conflict`](https://contextlens.hireme.jmkn.tech/?play=conflict) ·
-[`?play=sparse`](https://contextlens.hireme.jmkn.tech/?play=sparse))
+
+Deep links compose: `?vertical=telco|marketplace|fintech` · `?play=baseline|conflict|sparse` ·
+`?decay=0` (counterfactual) · `?eps=1` (privacy budget) · `?call=1` (agent console) — e.g.
+[the fintech conflict with the agent console open](https://contextlens.hireme.jmkn.tech/?vertical=fintech&play=conflict&call=1).
 
 ![ContextLens — conflict scenario](docs/screenshot-conflict.png)
 
@@ -67,6 +68,11 @@ Beyond the scripted scenarios:
 - **Privacy boundary** — every device event shows what actually crossed to the
   cloud: a 3-number vector, not the raw payload. Cloud webhooks are labeled as
   server-side.
+- **Business case per vertical** — a "why this matters" card leads each tab:
+  problem, what changes, a comparison table vs traditional agent handling, and
+  unit economics reframed as **resolutions per dollar** (0.2 triage decisions/$1
+  traditional vs ~80k intent decisions/$1 here — decisioning spend only, with an
+  explicit decision-≠-outcome footnote).
 - **Agent console** (`?call=1`, or "☎ subscriber calls in") — the same engine
   consumed by a human in real time: a support-agent screen-pop with the top
   signals in plain speech and a guardrail-gated play. In the conflict scenario
@@ -90,6 +96,7 @@ Honesty table — this demo argues against black boxes, so it doesn't get to be 
 | 2D semantic map | **Real projection.** PCA of the embedding space (variance shown in the UI). |
 | Model health ledger (precision/recall) | **Illustrative.** Labeled as such in the UI — scoring a simulator against its own authored ground truth would be circular theater. |
 | Latency guardrail | **Real measurement, simulated stakes.** Actual client-side compute time against a 250ms budget. |
+| Business-case figures (ticket costs, WISMO rates, resolutions/$) | **Illustrative.** Order-of-magnitude public industry benchmarks, labeled as such in the UI — not measurements from this demo. |
 | Live signal scoring | **Real, end to end.** Your text → Vertex AI embedding → same centroids, same softmax, same PCA transform as the precomputed signals (`api/`, a small FastAPI service on Cloud Run). |
 
 ## How the score is computed
