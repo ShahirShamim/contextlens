@@ -53,6 +53,14 @@ Beyond the scripted scenarios:
 - **Privacy boundary** — every device event shows what actually crossed to the
   cloud: a 3-number vector, not the raw payload. Cloud webhooks are labeled as
   server-side.
+- **Agent console** (`?call=1`, or "☎ subscriber calls in") — the same engine
+  consumed by a human in real time: a support-agent screen-pop with the top
+  signals in plain speech and a guardrail-gated play. In the conflict scenario
+  it says *fix the failed payment first, don't pitch while friction is
+  unresolved* — deliberately rule-based, so every sentence stays auditable
+  against the attribution (an LLM draft would reintroduce the black box).
+  Wording tier follows confidence: ≥85% offer, 70–85% explore, below floor
+  listen.
 
 ## What's real vs. what's simulated
 

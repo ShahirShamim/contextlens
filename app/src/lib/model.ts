@@ -212,6 +212,104 @@ export function agentDecision(agg: Aggregate, P: Params): { kind: StatusKind | "
   return { kind: "good", text: "→ retention journey · care callback within 24h" };
 }
 
+/* --------------------------------------------------------- agent assist
+ * Real-time support-agent briefing, derived entirely from the aggregate so
+ * every sentence is auditable against the attribution bars. Deliberately
+ * rule-based, not LLM-generated: deterministic, instant, and it doesn't
+ * reintroduce the black box this demo argues against.
+ */
+
+export function agentPhrase(ev: SignalEvent): string {
+  const when = ev.age_days === 0 ? "this session" : `${ev.age_days}d ago`;
+  const p = ev.payload as Record<string, string | number>;
+  switch (ev.event_type) {
+    case "app_screen_dwell":
+      return `was on “${p.screen}” ${when}`;
+    case "cart_event":
+      return `${p.action} ${when}`;
+    case "billing_event":
+      return `billing: ${p.type} ${when}`;
+    case "support_ticket":
+      return `support contact ${when}: ${p.topic}`;
+    case "web_visit":
+      return `browsed ${p.url} ${when}`;
+    case "network_probe":
+      return `${p.action} ${when}`;
+    case "marketing_event":
+      return `${p.type} — ${p.campaign} ${when}`;
+    case "app_open":
+      return `opened the app on “${p.screen}” ${when}`;
+    case "custom_signal":
+      return `live signal ${when}: “${p.text}”`;
+    default:
+      return `${ev.event_type.replace(/_/g, " ")} ${when}`;
+  }
+}
+
+export interface AgentPlay {
+  kind: StatusKind;
+  verb: "OFFER" | "EXPLORE" | "LISTEN";
+  headline: string;
+  steps: string[];
+}
+
+export function agentPlay(agg: Aggregate): AgentPlay {
+  const top = [...agg.rows].sort((a, b) => b.share - a.share);
+  const topPos = top.find((r) => r.v >= 0);
+  const topNeg = top.find((r) => r.v < 0);
+  const verb = agg.suppressed ? "LISTEN" : agg.confidence >= 85 ? "OFFER" : "EXPLORE";
+
+  if (agg.suppressed)
+    return {
+      kind: "critical",
+      verb,
+      headline: "Listen — no reliable inference",
+      steps: [
+        "The system declines to presume intent below the 70% floor — open questions only",
+        "Don't reference offers or churn risk; there's no evidence to anchor either",
+        "Fresh signals from this call will rebuild the score in real time",
+      ],
+    };
+  if (agg.drifting)
+    return {
+      kind: "warning",
+      verb,
+      headline: "Fix the friction first, then pivot",
+      steps: [
+        topNeg
+          ? `Sources disagree — acknowledge the negative first: ${agentPhrase(topNeg.ev)}`
+          : "Sources disagree — surface and resolve the friction before anything else",
+        "Do NOT lead with a sales pitch while that friction is unresolved",
+        topPos
+          ? `Once resolved, pivot to their live interest: ${agentPhrase(topPos.ev)}`
+          : "Once resolved, explore what brought them in today",
+        "Automated activation is muted for this exact reason — the human closes the gap",
+      ],
+    };
+  if (agg.net > 0)
+    return {
+      kind: "good",
+      verb,
+      headline: "Lead with the upgrade",
+      steps: [
+        `${verb === "OFFER" ? "Offer" : "Explore"} Unlimited 5G directly — ${agg.confidence.toFixed(0)}% confidence, guardrails clear`,
+        topPos ? `Anchor on their strongest signal: ${agentPhrase(topPos.ev)}` : "Anchor on their recent plan research",
+        topNeg ? `Be ready for: ${agentPhrase(topNeg.ev)} — address it if raised, don't ignore it` : "No negative signals on file",
+        "Close with in-app confirmation next session",
+      ],
+    };
+  return {
+    kind: "good",
+    verb,
+    headline: "Retention play",
+    steps: [
+      "Churn evidence outweighs upgrade intent — lead with value, not price",
+      topNeg ? `Address the strongest driver: ${agentPhrase(topNeg.ev)}` : "Probe for the friction driving churn signals",
+      "Offer a retention credit before they ask for a cancellation path",
+    ],
+  };
+}
+
 /* ------------------------------------------------- Intent HQ layer map
  * Source: intenthq.com/deeptech ("Seven layers. One architecture."), July
  * 2026. This demo is an independent simplification, not their implementation.

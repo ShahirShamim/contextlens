@@ -212,6 +212,8 @@ export default function App() {
             P={scored.P ?? P}
             epsilon={epsilon}
             privacyCost={scored.privacyCost}
+            subscriber={model.subscriber}
+            initialCallOpen={params.get("call") === "1"}
           />
         </div>
       </main>
